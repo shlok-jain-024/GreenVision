@@ -1,0 +1,12 @@
+# Kept out of the build context. Anything listed here CANNOT be COPYed in the
+# Dockerfile — `COPY outputs/ outputs/` against this file is what broke the
+# build. outputs/ and models/ are runtime artifacts: the server regenerates
+# both at startup, so the Dockerfile makes the directories instead of copying
+# them. web/ is deliberately NOT here — index.html loads /gv-engine.js from it.
+.venv/
+__pycache__/
+*.pyc
+models/*.jsonl
+models/*.json
+outputs/
+.git/

@@ -1,0 +1,1318 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0">
+<title>Green Vision · Environmental Intelligence</title>
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&family=Sora:wght@500;600;700;800&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#f4f7f6; --bg2:#e9f0ee; --ink:#0d2a26; --ink-soft:#42615b; --line:#d5e2dd;
+  --card:rgba(255,255,255,.72); --card-solid:#ffffff; --glass-brd:rgba(255,255,255,.6);
+  --brand:#12b981; --brand-dk:#0e9f6e; --sky:#2f7ef0; --amber:#f5a623; --red:#ef4444; --violet:#8b5cf6;
+  --shadow:0 10px 30px -8px rgba(13,42,38,.28); --shadow-sm:0 4px 14px -4px rgba(13,42,38,.25);
+  --blur:saturate(150%) blur(14px);
+}
+[data-theme="dark"]{
+  --bg:#0a1512; --bg2:#0f1f1b; --ink:#e6f2ee; --ink-soft:#9fc2b8; --line:#1e332d;
+  --card:rgba(18,32,28,.7); --card-solid:#12201c; --glass-brd:rgba(255,255,255,.08);
+  --shadow:0 12px 34px -10px rgba(0,0,0,.6); --shadow-sm:0 6px 18px -6px rgba(0,0,0,.55);
+}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent;}
+html,body{height:100%;margin:0;}
+body{font-family:'Manrope',system-ui,sans-serif;color:var(--ink);background:var(--bg);overflow:hidden;}
+h1,h2,h3,h4,.disp{font-family:'Sora',sans-serif;}
+.mono{font-family:ui-monospace,Menlo,Consolas,monospace;}
+button{font-family:inherit;cursor:pointer;color:inherit;}
+#map{position:absolute;inset:0;background:var(--bg2);z-index:1;}
+.leaflet-container{background:var(--bg2);font-family:'Manrope',sans-serif;}
+
+/* ---------- glass primitives ---------- */
+.glass{background:var(--card);-webkit-backdrop-filter:var(--blur);backdrop-filter:var(--blur);
+  border:1px solid var(--glass-brd);box-shadow:var(--shadow);}
+.pill{border-radius:999px;} .rnd{border-radius:18px;}
+
+/* ---------- top toolbar ---------- */
+#toolbar{position:absolute;top:14px;left:14px;right:14px;z-index:1000;display:flex;gap:10px;align-items:center;pointer-events:none;}
+#toolbar>*{pointer-events:auto;}
+.brand{display:flex;align-items:center;gap:10px;padding:9px 14px;border-radius:16px;}
+.brand .logo{width:30px;height:30px;flex:none;}
+.brand b{font-family:'Sora';font-weight:800;font-size:17px;letter-spacing:-.02em;}
+.brand span{font-size:10px;font-weight:700;color:var(--ink-soft);text-transform:uppercase;letter-spacing:.12em;display:block;margin-top:-2px;}
+.searchwrap{flex:1;max-width:440px;display:flex;align-items:center;gap:8px;padding:8px 12px;border-radius:16px;position:relative;}
+.searchwrap svg{width:18px;height:18px;flex:none;color:var(--ink-soft);}
+.searchwrap input{border:0;background:transparent;outline:none;flex:1;min-width:0;font-size:15px;font-weight:600;color:var(--ink);}
+.searchwrap input::placeholder{color:var(--ink-soft);}
+#acList{position:absolute;top:52px;left:0;right:0;border-radius:14px;overflow:hidden;display:none;max-height:320px;overflow-y:auto;}
+#acList.show{display:block;}
+.ac{padding:10px 14px;cursor:pointer;border-bottom:1px solid var(--line);}
+.ac:last-child{border-bottom:0;} .ac:hover{background:var(--bg2);}
+.ac .n{font-weight:700;font-size:14px;} .ac .m{font-size:11.5px;color:var(--ink-soft);margin-top:1px;}
+.tb-actions{display:flex;gap:8px;margin-left:auto;}
+.iconbtn{width:44px;height:44px;border:0;border-radius:14px;display:flex;align-items:center;justify-content:center;
+  transition:transform .12s ease,background .15s;}
+.iconbtn:hover{transform:translateY(-2px);} .iconbtn:active{transform:translateY(0);}
+.iconbtn svg{width:20px;height:20px;}
+.iconbtn.on{background:var(--brand);color:#fff;box-shadow:0 6px 16px -4px rgba(18,185,129,.6);}
+
+/* ---------- view switcher (bottom center) ---------- */
+#views{position:absolute;bottom:22px;left:50%;transform:translateX(-50%);z-index:1000;display:flex;gap:4px;padding:5px;border-radius:18px;}
+.viewbtn{border:0;background:transparent;padding:9px 15px;border-radius:14px;font-weight:700;font-size:13px;color:var(--ink-soft);display:flex;align-items:center;gap:7px;transition:.15s;}
+.viewbtn svg{width:16px;height:16px;}
+.viewbtn.active{background:var(--brand);color:#fff;box-shadow:0 6px 16px -5px rgba(18,185,129,.7);}
+.viewbtn:not(.active):hover{color:var(--ink);background:var(--bg2);}
+
+/* ---------- floating right controls ---------- */
+#mapctrl{position:absolute;right:14px;top:50%;transform:translateY(-50%);z-index:1000;display:flex;flex-direction:column;gap:8px;}
+#mapctrl .iconbtn{width:42px;height:42px;border-radius:13px;}
+#compass{transition:transform .3s ease;}
+
+/* ---------- time machine ---------- */
+#timebar{position:absolute;bottom:22px;left:14px;z-index:1000;padding:12px 16px;border-radius:16px;width:min(330px,42vw);display:none;}
+#timebar.show{display:block;}
+#timebar .th{display:flex;justify-content:space-between;align-items:center;font-weight:800;font-size:13px;margin-bottom:8px;font-family:'Sora';}
+#timebar .th button{border:0;background:var(--bg2);border-radius:8px;padding:3px 8px;font-size:11px;font-weight:700;}
+#timeRange{width:100%;accent-color:var(--brand);}
+#timeLabel{font-size:12px;font-weight:700;color:var(--ink-soft);margin-top:4px;text-align:center;}
+
+/* ---------- analysis panel ---------- */
+#panel{position:absolute;top:0;right:0;bottom:0;width:min(420px,94vw);z-index:1200;transform:translateX(102%);
+  transition:transform .34s cubic-bezier(.22,1,.36,1);display:flex;flex-direction:column;
+  border-left:1px solid var(--glass-brd);}
+#panel.open{transform:translateX(0);}
+.ph{padding:16px 18px 12px;border-bottom:1px solid var(--line);position:relative;}
+.ph .close{position:absolute;top:14px;right:14px;width:32px;height:32px;border-radius:10px;border:0;background:var(--bg2);display:flex;align-items:center;justify-content:center;}
+.ph .eyebrow{font-size:10.5px;font-weight:800;letter-spacing:.14em;text-transform:uppercase;color:var(--brand-dk);}
+.ph h2{margin:3px 40px 2px 0;font-size:20px;line-height:1.15;letter-spacing:-.02em;}
+.ph .sub{font-size:12px;color:var(--ink-soft);font-weight:600;}
+.pbody{flex:1;overflow-y:auto;padding:14px 16px 30px;}
+.pbody::-webkit-scrollbar{width:8px;} .pbody::-webkit-scrollbar-thumb{background:var(--line);border-radius:8px;}
+.section{margin-bottom:16px;}
+.section>h3{font-size:12px;font-weight:800;text-transform:uppercase;letter-spacing:.1em;color:var(--ink-soft);margin:0 0 9px;}
+
+/* score ring */
+.hero{display:flex;gap:16px;align-items:center;padding:16px;border-radius:18px;background:var(--card-solid);box-shadow:var(--shadow-sm);border:1px solid var(--line);}
+.ring{position:relative;width:96px;height:96px;flex:none;}
+.ring svg{transform:rotate(-90deg);} .ring .val{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;}
+.ring .val b{font-family:'Sora';font-weight:800;font-size:26px;line-height:1;} .ring .val span{font-size:9px;font-weight:800;letter-spacing:.1em;text-transform:uppercase;color:var(--ink-soft);}
+.hero .rt{flex:1;min-width:0;} .hero .rt .grade{font-family:'Sora';font-weight:800;font-size:19px;}
+.hero .rt p{margin:4px 0 0;font-size:12.5px;line-height:1.5;color:var(--ink-soft);font-weight:600;}
+
+/* metric grid */
+.mgrid{display:grid;grid-template-columns:1fr 1fr;gap:9px;}
+.metric{background:var(--card-solid);border:1px solid var(--line);border-radius:14px;padding:11px 12px;box-shadow:var(--shadow-sm);position:relative;overflow:hidden;cursor:default;transition:transform .12s;}
+.metric:hover{transform:translateY(-2px);}
+.metric .l{font-size:10.5px;font-weight:800;text-transform:uppercase;letter-spacing:.05em;color:var(--ink-soft);display:flex;align-items:center;gap:5px;}
+.metric .v{font-family:'Sora';font-weight:800;font-size:20px;margin-top:3px;letter-spacing:-.02em;}
+.metric .d{font-size:11px;font-weight:600;color:var(--ink-soft);margin-top:1px;line-height:1.35;}
+.metric .bar{height:5px;border-radius:6px;background:var(--bg2);margin-top:7px;overflow:hidden;}
+.metric .bar i{display:block;height:100%;border-radius:6px;transition:width .6s cubic-bezier(.22,1,.36,1);}
+.tag{display:inline-block;font-size:10px;font-weight:800;padding:2px 7px;border-radius:999px;}
+
+/* narrative */
+.narr{background:linear-gradient(135deg,rgba(18,185,129,.1),rgba(47,126,240,.08));border:1px solid var(--line);
+  border-radius:16px;padding:14px 15px;font-size:13.5px;line-height:1.6;font-weight:600;}
+.narr .ai{display:inline-flex;align-items:center;gap:6px;font-size:10px;font-weight:800;letter-spacing:.1em;text-transform:uppercase;color:var(--brand-dk);margin-bottom:7px;}
+.narr .ai svg{width:13px;height:13px;}
+
+/* suggestions */
+.sug{border:1px solid var(--line);border-radius:14px;padding:12px;margin-bottom:9px;background:var(--card-solid);box-shadow:var(--shadow-sm);}
+.sug .top{display:flex;justify-content:space-between;align-items:flex-start;gap:8px;}
+.sug .ttl{font-family:'Sora';font-weight:700;font-size:14px;line-height:1.25;}
+.sug .pri{font-size:9.5px;font-weight:800;padding:3px 8px;border-radius:999px;white-space:nowrap;text-transform:uppercase;letter-spacing:.04em;}
+.sug .stats{display:grid;grid-template-columns:1fr 1fr;gap:5px 10px;margin-top:9px;font-size:11.5px;font-weight:700;}
+.sug .stats span{color:var(--ink-soft);font-weight:600;} .sug .stats b{font-weight:800;}
+
+/* land */
+.landrow{display:flex;justify-content:space-between;align-items:center;padding:9px 0;border-bottom:1px dashed var(--line);font-size:13px;}
+.landrow:last-child{border-bottom:0;} .landrow .k{color:var(--ink-soft);font-weight:700;} .landrow .v{font-weight:800;text-align:right;}
+.valuebox{text-align:center;padding:16px;border-radius:16px;background:linear-gradient(135deg,rgba(245,166,35,.14),rgba(139,92,246,.1));border:1px solid var(--line);margin-bottom:12px;}
+.valuebox .lab{font-size:10.5px;font-weight:800;letter-spacing:.12em;text-transform:uppercase;color:var(--ink-soft);}
+.valuebox .amt{font-family:'Sora';font-weight:800;font-size:30px;letter-spacing:-.02em;margin:2px 0;}
+.valuebox .meta{display:flex;justify-content:center;gap:14px;font-size:12px;font-weight:700;margin-top:4px;}
+.notice{font-size:11.5px;line-height:1.5;font-weight:600;color:var(--ink-soft);background:var(--bg2);border-radius:12px;padding:10px 12px;}
+.notice b{color:var(--ink);}
+
+/* skeleton */
+.skel{background:linear-gradient(90deg,var(--bg2) 25%,var(--line) 37%,var(--bg2) 63%);background-size:400% 100%;animation:shim 1.3s ease infinite;border-radius:10px;}
+@keyframes shim{0%{background-position:100% 0}100%{background-position:-100% 0}}
+
+/* modal (street/traffic) */
+.modal{position:absolute;inset:0;z-index:2000;display:none;align-items:center;justify-content:center;padding:0;background:rgba(4,12,10,.55);-webkit-backdrop-filter:blur(6px);backdrop-filter:blur(6px);}
+.modal.show{display:flex;}
+.modal .sheet{position:relative;width:100%;height:100%;background:var(--card-solid);display:flex;flex-direction:column;}
+.modal .mh{display:flex;align-items:center;gap:12px;padding:12px 16px;border-bottom:1px solid var(--line);}
+.modal .mh b{font-family:'Sora';font-size:16px;} .modal .mh .close{margin-left:auto;border:0;background:var(--bg2);border-radius:10px;padding:8px 14px;font-weight:700;}
+.modal .mbody{flex:1;position:relative;background:#0a1512;}
+.modal iframe{width:100%;height:100%;border:0;}
+.modal .state{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:14px;color:#cfe;text-align:center;padding:30px;}
+.spinner{width:44px;height:44px;border-radius:50%;border:4px solid rgba(255,255,255,.25);border-top-color:var(--brand);animation:spin .8s linear infinite;}
+@keyframes spin{to{transform:rotate(360deg)}}
+.modal .note{position:absolute;left:14px;right:14px;bottom:14px;background:var(--card);border:1px solid var(--glass-brd);border-radius:12px;padding:9px 13px;font-size:11.5px;font-weight:700;-webkit-backdrop-filter:var(--blur);backdrop-filter:var(--blur);}
+
+/* toast */
+#toast{position:absolute;bottom:88px;left:50%;transform:translate(-50%,20px);z-index:2500;padding:11px 18px;border-radius:14px;font-weight:700;font-size:13px;opacity:0;pointer-events:none;transition:.3s;}
+#toast.show{opacity:1;transform:translate(-50%,0);}
+
+/* measure readout */
+#measure{position:absolute;top:74px;left:50%;transform:translateX(-50%);z-index:1000;padding:9px 16px;border-radius:13px;font-weight:800;font-size:13px;display:none;font-family:'Sora';}
+#measure.show{display:block;}
+
+/* compare tray */
+#compareTray{position:absolute;left:14px;top:74px;z-index:1000;width:min(300px,80vw);padding:14px;border-radius:16px;display:none;}
+#compareTray.show{display:block;}
+#compareTray h4{margin:0 0 10px;font-size:13px;font-family:'Sora';}
+.cmpslot{border:1px dashed var(--line);border-radius:12px;padding:10px;margin-bottom:8px;font-size:12px;font-weight:700;}
+.cmpslot.filled{border-style:solid;}
+.cmpbar{height:6px;border-radius:6px;background:var(--bg2);margin-top:6px;overflow:hidden;}.cmpbar i{display:block;height:100%;background:var(--brand);}
+
+/* onboarding */
+#intro{position:fixed;inset:0;z-index:5000;display:flex;align-items:center;justify-content:center;padding:22px;
+  background:radial-gradient(1200px 600px at 20% 10%,#12b98133,transparent),radial-gradient(1000px 600px at 90% 90%,#2f7ef033,transparent),var(--bg);}
+.introcard{width:min(500px,96vw);border-radius:26px;padding:30px;text-align:center;}
+.introcard .logo{width:64px;height:64px;margin:0 auto 14px;}
+.introcard h1{font-size:30px;letter-spacing:-.03em;margin:0 0 6px;}
+.introcard p{color:var(--ink-soft);font-weight:600;font-size:14px;line-height:1.55;margin:0 auto 20px;max-width:400px;}
+.introcard .go{border:0;background:var(--brand);color:#fff;font-family:'Sora';font-weight:700;font-size:16px;padding:14px 28px;border-radius:16px;box-shadow:0 10px 24px -6px rgba(18,185,129,.6);transition:transform .12s;}
+.introcard .go:hover{transform:translateY(-2px);}
+.feats{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin:0 0 22px;text-align:left;}
+.feat{display:flex;gap:9px;align-items:flex-start;font-size:12px;font-weight:600;color:var(--ink-soft);}
+.feat svg{width:16px;height:16px;color:var(--brand);flex:none;margin-top:1px;}
+
+.kbd{font-family:ui-monospace,monospace;font-size:10.5px;font-weight:700;background:var(--bg2);border:1px solid var(--line);border-radius:6px;padding:1px 5px;}
+/* goal picker + planting */
+.introcard{max-height:94vh;overflow-y:auto;}
+.goallabel{font-family:'Sora';font-weight:700;font-size:13px;text-align:left;margin:2px 0 8px;}
+.goalgrid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:7px;margin:0 0 20px;text-align:left;}
+.goalopt{border:1.5px solid var(--line);border-radius:12px;padding:9px 8px;font-size:11.5px;font-weight:700;cursor:pointer;transition:.14s;background:var(--card-solid);color:var(--ink-soft);line-height:1.2;}
+.goalopt:hover{border-color:var(--brand);color:var(--ink);}
+.goalopt.sel{background:var(--brand);border-color:var(--brand);color:#fff;box-shadow:0 6px 14px -5px rgba(18,185,129,.6);}
+.needpill{display:inline-block;font-family:'Sora';font-weight:800;font-size:12px;padding:4px 12px;border-radius:999px;}
+.spec{border:1px solid var(--line);border-radius:14px;padding:11px 12px;margin-bottom:8px;background:var(--card-solid);box-shadow:var(--shadow-sm);}
+.spec h4{margin:0;font-size:14px;font-family:'Sora';display:flex;justify-content:space-between;gap:8px;align-items:baseline;}
+.spec .bot{font-style:italic;color:var(--ink-soft);font-size:11.5px;font-weight:600;margin:1px 0 6px;}
+.spec .chips{display:flex;flex-wrap:wrap;gap:4px;}
+.spec .chip{font-size:9.5px;font-weight:800;border-radius:999px;padding:2px 7px;background:var(--bg2);color:var(--ink-soft);text-transform:uppercase;letter-spacing:.03em;}
+.spec .chip.tox{background:rgba(239,68,68,.14);color:#ef4444;}
+.spec .why{font-size:11.5px;font-weight:600;margin-top:6px;line-height:1.45;color:var(--ink-soft);}
+@media (max-width:640px){
+  #toolbar{flex-wrap:wrap;} .brand span{display:none;}
+  #panel{width:100vw;} .searchwrap{order:3;flex-basis:100%;max-width:none;}
+  #views{bottom:14px;} #timebar{width:calc(100vw - 28px);}
+}
+@media print{ #toolbar,#views,#mapctrl,#timebar,#measure,#compareTray,#map,.ph .close{display:none!important;}
+  #panel{position:static;transform:none;width:100%;box-shadow:none;border:0;} body{overflow:visible;height:auto;} }
+</style>
+</head>
+<body>
+
+<!-- INTRO -->
+<div id="intro">
+  <div class="introcard glass">
+    <svg class="logo" viewBox="0 0 48 48" fill="none"><circle cx="24" cy="24" r="22" fill="url(#g1)"/><path d="M24 9C17 11 13 17 13 24c0 8 11 15 11 15s11-7 11-15c0-7-4-13-11-15z" fill="#fff" opacity=".92"/><path d="M24 15v18M24 20l-5-3M24 25l6-4M24 30l-5-3" stroke="#0e9f6e" stroke-width="2" stroke-linecap="round"/><defs><linearGradient id="g1" x1="0" y1="0" x2="48" y2="48"><stop stop-color="#12b981"/><stop offset="1" stop-color="#2f7ef0"/></linearGradient></defs></svg>
+    <h1>Green Vision</h1>
+    <p>Click anywhere on the map to generate a full environmental intelligence report — real air quality, weather, tree canopy, land use and an AI-modelled green score, plus land-value estimates and greening suggestions.</p>
+    <div class="feats">
+      <div class="feat"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 6L9 17l-5-5"/></svg>Real AQI, weather &amp; solar data</div>
+      <div class="feat"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 6L9 17l-5-5"/></svg>OSM trees, parks &amp; buildings</div>
+      <div class="feat"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 6L9 17l-5-5"/></svg>Modelled green &amp; heat scores</div>
+      <div class="feat"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 6L9 17l-5-5"/></svg>Land value &amp; suggestions</div>
+    </div>
+    <div class="goallabel">What do you want to build here?</div>
+    <div class="goalgrid" id="goalGrid"></div>
+    <button class="go" id="enterBtn">Open the map →</button>
+    <p style="font-size:11px;margin-top:14px;opacity:.8">Runs free, no account. Ownership records aren't publicly available by coordinate, so land value is a transparent estimate — never fabricated.</p>
+  </div>
+</div>
+
+<div id="map"></div>
+
+<!-- TOOLBAR -->
+<div id="toolbar">
+  <div class="brand glass">
+    <svg class="logo" viewBox="0 0 48 48" fill="none"><circle cx="24" cy="24" r="22" fill="url(#g2)"/><path d="M24 9C17 11 13 17 13 24c0 8 11 15 11 15s11-7 11-15c0-7-4-13-11-15z" fill="#fff" opacity=".92"/><path d="M24 15v18M24 20l-5-3M24 25l6-4M24 30l-5-3" stroke="#0e9f6e" stroke-width="2" stroke-linecap="round"/><defs><linearGradient id="g2" x1="0" y1="0" x2="48" y2="48"><stop stop-color="#12b981"/><stop offset="1" stop-color="#2f7ef0"/></linearGradient></defs></svg>
+    <div><b>Green Vision</b><span>Env Intelligence</span></div>
+  </div>
+  <div class="searchwrap glass">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4.3-4.3"/></svg>
+    <input id="q" placeholder="Search a place, address or lat, lon…" autocomplete="off">
+    <div id="acList" class="glass"></div>
+  </div>
+  <div class="tb-actions">
+    <button class="iconbtn glass" id="cmpBtn" title="Compare two locations"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 3v18M3 8h6M15 3v18M15 8h6"/></svg></button>
+    <button class="iconbtn glass" id="favBtn" title="Favorites"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 17.3l-6.2 3.7 1.6-7L2 9.2l7.2-.6L12 2l2.8 6.6 7.2.6-5.4 4.8 1.6 7z"/></svg></button>
+    <button class="iconbtn glass" id="shareBtn" title="Copy shareable link"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><path d="M8.6 13.5l6.8 4M15.4 6.5l-6.8 4"/></svg></button>
+    <button class="iconbtn glass" id="themeBtn" title="Toggle dark / light"><svg id="themeIcon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="4.5"/><path d="M12 2v2M12 20v2M4 12H2M22 12h-2M5 5l1.5 1.5M17.5 17.5L19 19M19 5l-1.5 1.5M6.5 17.5L5 19"/></svg></button>
+  </div>
+</div>
+
+<!-- VIEW SWITCHER -->
+<div id="views" class="glass">
+  <button class="viewbtn active" data-view="satellite"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M2 12s4-8 10-8 10 8 10 8-4 8-10 8S2 12 2 12z"/><circle cx="12" cy="12" r="3"/></svg>Satellite</button>
+  <button class="viewbtn" data-view="green"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22V12M12 12C12 7 8 3 3 3c0 5 4 9 9 9zM12 12c0-4 4-8 9-8 0 5-4 8-9 8z"/></svg>Green</button>
+  <button class="viewbtn" data-view="plant"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 20h18M6 20V10M18 20V10M12 20V4M6 10l6-4 6 4"/></svg>Plant</button>
+  <button class="viewbtn" data-view="street"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="8" r="3.2"/><path d="M6 21v-2a6 6 0 0112 0v2"/></svg>Street</button>
+  <button class="viewbtn" data-view="traffic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="2" width="6" height="20" rx="3"/><circle cx="12" cy="7" r="1.2"/><circle cx="12" cy="12" r="1.2"/><circle cx="12" cy="17" r="1.2"/></svg>Traffic</button>
+  <button class="viewbtn" data-view="time"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg>Time</button>
+</div>
+
+<!-- MAP CONTROLS -->
+<div id="mapctrl">
+  <button class="iconbtn glass" id="zoomIn" title="Zoom in"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 5v14M5 12h14"/></svg></button>
+  <button class="iconbtn glass" id="zoomOut" title="Zoom out"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14"/></svg></button>
+  <button class="iconbtn glass" id="locBtn" title="My location"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3.2"/><path d="M12 2v3M12 19v3M2 12h3M19 12h3"/></svg></button>
+  <button class="iconbtn glass" id="measBtn" title="Measure distance / area"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 17L17 3l4 4L7 21z"/><path d="M8 8l2 2M11 5l2 2M5 11l2 2"/></svg></button>
+  <button class="iconbtn glass" id="suggestBtn" title="Suggest sites for my goal near here"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22c4-4 7-7 7-11a7 7 0 00-14 0c0 4 3 7 7 11z"/><path d="M12 13V8M12 9l2-2M12 11l-2-2"/></svg></button>
+  <button class="iconbtn glass" id="fsBtn" title="Fullscreen"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 9V4h5M20 9V4h-5M4 15v5h5M20 15v5h-5"/></svg></button>
+  <button class="iconbtn glass" id="compass" title="Reset north"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M12 7l2.5 5L12 17l-2.5-5z" fill="#ef4444" stroke="#ef4444"/></svg></button>
+</div>
+
+<div id="measure" class="glass"></div>
+
+<!-- COMPARE TRAY -->
+<div id="compareTray" class="glass">
+  <h4>Compare locations</h4>
+  <div class="cmpslot" id="cmpA">Slot A — click the map</div>
+  <div class="cmpslot" id="cmpB">Slot B — click again</div>
+  <div id="cmpResult"></div>
+</div>
+
+<!-- TIME MACHINE -->
+<div id="timebar" class="glass">
+  <div class="th"><span>Time Machine · NASA imagery</span><button id="timeClose">✕</button></div>
+  <input type="range" id="timeRange" min="0" max="0" value="0">
+  <div id="timeLabel">—</div>
+</div>
+
+<!-- ANALYSIS PANEL -->
+<div id="panel" class="glass">
+  <div class="ph">
+    <div class="eyebrow" id="pEyebrow">Environmental Report</div>
+    <h2 id="pTitle">Analysing…</h2>
+    <div class="sub" id="pSub">—</div>
+    <button class="close" id="pClose"><svg viewBox="0 0 24 24" width="16" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M6 6l12 12M18 6L6 18"/></svg></button>
+  </div>
+  <div class="pbody" id="pBody"></div>
+</div>
+
+<!-- MODAL -->
+<div class="modal" id="modal">
+  <div class="sheet">
+    <div class="mh"><b id="modalTitle">Street View</b><button class="close" id="modalClose">✕ Close</button></div>
+    <div class="mbody" id="modalBody"></div>
+  </div>
+</div>
+
+<div id="toast" class="glass"></div>
+
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+<script>
+"use strict";
+/* ============================================================
+   CONFIG
+   ============================================================ */
+const CFG = {
+  START:[23.0225,72.5714], START_Z:15, HOME:"Ahmedabad, Gujarat, India",
+  // Left blank -> the app writes insights itself from the real data (fully functional).
+  // ▼▼ PASTE YOUR KEYS HERE ▼▼
+  // 1) Google Maps key (console.cloud.google.com → enable "Maps JavaScript API",
+  //    "Places API" and "Geocoding API", then restrict the key to your site).
+  GOOGLE_KEY:"",
+  // 2) NVIDIA NIM key — left EMPTY on purpose. The browser never calls NVIDIA; the
+  //    local GreenGrid engine server does (server-side), reading NVIDIA_API_KEY from
+  //    its own environment. This slot is a placeholder only, kept separate from Google.
+  NVIDIA_KEY:"",
+  // Local GreenGrid engine server — the real trainable engine (backtest + memory +
+  // MCDA + species KB). Start it with:  python -m greenplan.server
+  // Runs fully offline with the API keys above empty; NVIDIA_API_KEY on the server
+  // only upgrades the city training/prediction to live reasoning.
+  ENGINE_URL:"http://127.0.0.1:8000",
+  // ▲▲ Without keys the app still runs on OpenStreetMap search + the built-in model. ▲▲
+  ESRI:"https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}",
+  GOOG_SAT:"https://mt1.google.com/vt/lyrs=s&x={x}&y={y}&z={z}",
+  OSM:"https://tile.openstreetmap.org/{z}/{x}/{y}.png",
+  OVERPASS:["https://overpass-api.de/api/interpreter","https://overpass.kumi.systems/api/interpreter"]
+};
+
+/* ============================================================
+   USER GOAL + CURATED SPECIES ENGINE  (what-to-build + planting)
+   ============================================================ */
+const state={goal:"residential"};
+let lastGeo=null, lastPlace="";
+const GOALS={
+  residential:{label:"Residential",want:["shade","residential","fruit","flower"],excludeToxic:true,big:true},
+  avenue:{label:"Roadside avenue",want:["avenue","buffer","median","flower"],excludeToxic:false,big:true},
+  park:{label:"Public park",want:["park","shade","flower","fruit"],excludeToxic:false,big:true},
+  community:{label:"Community garden",want:["fruit","flower","hedge","community","residential"],excludeToxic:true,big:false},
+  greenbelt:{label:"Green belt / Miyawaki",want:["greenbelt","buffer","shade","arid","park"],excludeToxic:false,big:true},
+  riverfront:{label:"Riverfront green",want:["riverbank","wetland","shade","park","flower"],excludeToxic:false,big:true},
+  campus:{label:"School / campus",want:["campus","shade","fruit","flower"],excludeToxic:true,big:true},
+  industrial:{label:"Industrial buffer",want:["industrial","buffer","arid"],excludeToxic:false,big:true},
+  median:{label:"Highway median",want:["median","hedge","arid","flower"],excludeToxic:false,big:false},
+  rooftop:{label:"Rooftop garden",want:["rooftop","hedge","flower"],excludeToxic:true,big:false},
+  plaza:{label:"Urban plaza",want:["plaza","median","hedge","flower"],excludeToxic:true,big:false},
+  wetland:{label:"Wetland / pond edge",want:["wetland","riverbank","flower","park"],excludeToxic:false,big:true}
+};
+const GOAL_SEARCH={
+  residential:["residential area","housing society","new neighbourhood"],
+  avenue:["main road","arterial road","avenue"],
+  park:["public park","garden","municipal park"],
+  community:["community ground","maidan","open public plot"],
+  greenbelt:["vacant land","barren ground","green belt"],
+  riverfront:["riverfront","river bank","lake front"],
+  campus:["school","college campus","university"],
+  industrial:["industrial area","GIDC estate","factory zone"],
+  median:["ring road","bypass","flyover"],
+  rooftop:["commercial complex","shopping mall","market"],
+  plaza:["town square","chowk","plaza"],
+  wetland:["lake","pond","wetland"]
+};
+// Curated India-climate species set (canopy m², CO2 kg/yr, lifespan yr, pollution tolerance 1-5).
+const SEED_PLANTS=[
+  {n:"Neem",bot:"Azadirachta indica",type:"tree",tags:["avenue","shade","buffer","arid","residential","campus","park","greenbelt","median"],pol:5,dr:true,canopy:60,life:150,co2:22,note:"Hardy evergreen, natural pest-repellent, excellent dust and air purifier."},
+  {n:"Peepal",bot:"Ficus religiosa",type:"tree",tags:["park","shade","avenue","greenbelt"],pol:5,dr:false,canopy:120,life:200,co2:30,note:"Releases oxygen for long hours; vast shade; needs space."},
+  {n:"Banyan",bot:"Ficus benghalensis",type:"tree",tags:["park","shade","greenbelt"],pol:5,dr:false,canopy:200,life:200,co2:35,note:"Massive canopy and biodiversity haven — only for large open grounds."},
+  {n:"Pongamia (Karanja)",bot:"Pongamia pinnata",type:"tree",tags:["avenue","buffer","industrial","arid","residential","greenbelt","riverbank"],pol:5,dr:true,canopy:60,life:90,co2:20,note:"Nitrogen-fixing, thrives in poor soil, superb pollution and noise buffer."},
+  {n:"Jamun",bot:"Syzygium cumini",type:"tree",tags:["avenue","shade","fruit","residential","campus","park","greenbelt","riverbank"],pol:4,dr:false,canopy:70,life:90,co2:22,note:"Dense evergreen, edible fruit, strong particulate capture along roads."},
+  {n:"Arjuna",bot:"Terminalia arjuna",type:"tree",tags:["avenue","park","buffer","riverbank","wetland","greenbelt"],pol:4,dr:false,canopy:80,life:120,co2:24,note:"Tall shade tree, medicinal bark, ideal for wide roads and waterways."},
+  {n:"Amaltas",bot:"Cassia fistula",type:"tree",tags:["avenue","flower","park","arid","residential","campus","plaza"],pol:4,dr:true,canopy:40,life:50,co2:15,note:"Golden-yellow blooms, drought-hardy, classic ornamental avenue tree."},
+  {n:"Tamarind",bot:"Tamarindus indica",type:"tree",tags:["avenue","shade","fruit","arid","park","greenbelt"],pol:4,dr:true,canopy:90,life:150,co2:26,note:"Very long-lived, deep shade, edible pods; slow but permanent."},
+  {n:"Mast tree (Ashoka)",bot:"Polyalthia longifolia",type:"tree",tags:["avenue","buffer","industrial","plaza","campus","residential","median"],pol:4,dr:true,canopy:20,life:50,co2:11,note:"Columnar — perfect narrow-road screen and noise/dust barrier."},
+  {n:"Gulmohar",bot:"Delonix regia",type:"tree",tags:["avenue","flower","park","residential"],pol:3,dr:true,canopy:70,life:45,co2:18,note:"Spectacular red canopy; fast shade for parks and wide avenues."},
+  {n:"Pride of India",bot:"Lagerstroemia speciosa",type:"tree",tags:["avenue","flower","plaza","park","median"],pol:4,dr:false,canopy:40,life:50,co2:14,note:"Purple summer flowers, compact crown for medians and plazas."},
+  {n:"Palash",bot:"Butea monosperma",type:"tree",tags:["park","flower","arid","buffer","greenbelt","wetland"],pol:4,dr:true,canopy:35,life:50,co2:12,note:"'Flame of the forest' — thrives in dry, degraded soils; pollinator magnet."},
+  {n:"Ber",bot:"Ziziphus mauritiana",type:"tree",tags:["arid","fruit","buffer","industrial"],pol:4,dr:true,canopy:25,life:35,co2:8,note:"Tough small fruit tree for arid buffers and wastelands."},
+  {n:"Bougainvillea",bot:"Bougainvillea glabra",type:"shrub/climber",tags:["hedge","median","plaza","flower","arid","residential","rooftop"],pol:4,dr:true,canopy:6,life:30,co2:3,note:"Vivid low-water screen for fences, medians, walls and rooftops."},
+  {n:"Hibiscus",bot:"Hibiscus rosa-sinensis",type:"shrub",tags:["hedge","flower","residential","campus","plaza","rooftop","community"],pol:3,dr:false,canopy:4,life:25,co2:2,note:"Friendly flowering hedge; safe around children; great in containers."},
+  {n:"Oleander (Kaner)",bot:"Nerium oleander",type:"shrub",tags:["median","hedge","arid","industrial"],pol:4,dr:true,canopy:5,life:30,co2:2,toxic:true,note:"Very hardy median shrub — but toxic; keep away from schools and homes."}
+];
+function pickSpecies(aqi){const g=GOALS[state.goal];aqi=aqi==null?90:aqi;
+  return SEED_PLANTS.map(p=>{if(g.excludeToxic&&p.toxic)return null;const m=p.tags.filter(t=>g.want.includes(t)).length;
+    if(m===0&&!(state.goal==="industrial"&&p.pol>=4))return null;
+    const sc=m*4+p.pol*(aqi>100?2.2:1.2)+(p.dr?3:0)+(g.big?(p.canopy>50?1.5:0):(p.canopy<15?2:0));
+    return{...p,sc};}).filter(Boolean).sort((a,b)=>b.sc-a.sc).slice(0,5);}
+function needLevel(green,aqi){green=green==null?20:green;aqi=aqi==null?90:aqi;let sc=0;
+  sc+=green<10?3:green<25?2:green<40?1:0; sc+=aqi>150?3:aqi>100?2:aqi>50?1:0;
+  if(sc>=5)return{t:"CRITICAL",c:"#ef4444",tx:"#fff",msg:"Low tree cover and poor air — high-priority greening."};
+  if(sc>=3)return{t:"HIGH",c:"#f97316",tx:"#fff",msg:"Noticeably under-planted for its air quality."};
+  if(sc>=1)return{t:"MODERATE",c:"#f5a623",tx:"#3a2a00",msg:"Some greening would still help."};
+  return{t:"HEALTHY",c:"#12b981",tx:"#fff",msg:"Already well vegetated — maintain and diversify."};}
+function projectImpact(species,trees,sideKm){const avg=k=>species.reduce((a,p)=>a+p[k],0)/species.length;
+  const canopy=avg("canopy"),co2=avg("co2"),life=avg("life");
+  const canopyArea=trees*canopy,areaM2=(sideKm||1.2)*(sideKm||1.2)*1e6;
+  return{canopyHa:canopyArea/1e4,upliftPct:Math.min(60,Math.round(canopyArea/areaM2*100)),
+    co2yr:trees*co2/1000,cum30:trees*co2*22.5/1000,life:Math.round(life)};}
+
+/* ============================================================
+   SMALL UTILITIES
+   ============================================================ */
+const $=s=>document.querySelector(s), $$=s=>[...document.querySelectorAll(s)];
+const clamp=(v,a,b)=>Math.max(a,Math.min(b,v));
+const round=(v,d=0)=>{const p=Math.pow(10,d);return Math.round(v*p)/p;};
+function toast(msg){const t=$("#toast");t.textContent=msg;t.classList.add("show");clearTimeout(t._t);t._t=setTimeout(()=>t.classList.remove("show"),2600);}
+async function fetchT(url,opts={},ms=13000){const c=new AbortController();const id=setTimeout(()=>c.abort(),ms);
+  try{const r=await fetch(url,{...opts,signal:c.signal});return r;}catch(e){return null;}finally{clearTimeout(id);}}
+async function getJSON(url,opts,ms){const r=await fetchT(url,opts,ms);if(!r||!r.ok)return null;try{return await r.json();}catch(e){return null;}}
+// Overpass rejects raw text/plain bodies with HTTP 406 — it needs a form-encoded
+// `data=` payload plus an explicit Accept header. Verified against overpass-api.de.
+function overpassReq(q){return {method:"POST",
+  headers:{"Content-Type":"application/x-www-form-urlencoded","Accept":"application/json"},
+  body:"data="+encodeURIComponent(q)};}
+function haversine(a,b,c,d){const R=6371,p=Math.PI/180,x=(c-a)*p,y=(d-b)*p,s=Math.sin(x/2)**2+Math.cos(a*p)*Math.cos(c*p)*Math.sin(y/2)**2;return 2*R*Math.asin(Math.sqrt(s));}
+function inr(n){ // Indian formatting
+  if(n>=1e7) return "₹"+round(n/1e7,2)+" Cr";
+  if(n>=1e5) return "₹"+round(n/1e5,2)+" L";
+  return "₹"+Math.round(n).toLocaleString("en-IN");
+}
+function fmt(n){return Number(n).toLocaleString("en-IN");}
+
+/* ============================================================
+   AI (LLM) + GOOGLE SEARCH  — activate when keys are set
+   ============================================================ */
+let googleReady=false;
+// The AI here is the local, trained GreenGrid engine (Python server, not the
+// browser). aiOn() reflects whether that server answered a health probe.
+let engineOnline=false;
+function aiOn(){return engineOnline;}
+async function engineProbe(){
+  const r=await fetchT(CFG.ENGINE_URL+"/api/health",{},4000);
+  engineOnline=!!(r&&r.ok);
+  return engineOnline;
+}
+// Ask the trained engine for the species pick + justification for this point.
+async function engineRecommend(s,lat,lon){
+  const r=await fetchT(CFG.ENGINE_URL+"/api/recommend",{method:"POST",
+    headers:{"Content-Type":"application/json"},
+    body:JSON.stringify({lat,lon,aqi:s.aqi,green:s.green,vegPct:s.vegPct,
+      plantable:clamp(1-(s.vegPct||0)/100,0,1)})},15000);
+  if(!r||!r.ok) return null;
+  try{return await r.json();}catch(e){return null;}
+}
+function loadGoogleSearch(){
+  if(!CFG.GOOGLE_KEY) return;
+  window._gvGoogleReady=function(){
+    try{
+      const ac=new google.maps.places.Autocomplete($("#q"),{fields:["geometry","name","formatted_address"]});
+      ac.addListener("place_changed",()=>{const p=ac.getPlace();if(p&&p.geometry&&p.geometry.location){
+        const la=p.geometry.location.lat(), lo=p.geometry.location.lng();
+        $("#acList").classList.remove("show");$("#q").value=p.name||p.formatted_address||$("#q").value;
+        map.setView([la,lo],16);analyse(la,lo);}});
+      googleReady=true; $("#q").placeholder="Search with Google Maps…";
+    }catch(e){ googleReady=false; }
+  };
+  const s=document.createElement("script");s.async=true;s.defer=true;
+  s.src="https://maps.googleapis.com/maps/api/js?key="+encodeURIComponent(CFG.GOOGLE_KEY)+"&libraries=places&callback=_gvGoogleReady&loading=async";
+  s.onerror=()=>{googleReady=false;toast("Google Maps key rejected — using OpenStreetMap search");};
+  document.head.appendChild(s);
+}
+async function googleGeocode(q){
+  if(!CFG.GOOGLE_KEY) return null;
+  const j=await getJSON("https://maps.googleapis.com/maps/api/geocode/json?address="+encodeURIComponent(q)+"&key="+encodeURIComponent(CFG.GOOGLE_KEY));
+  if(j&&j.status==="OK"&&j.results&&j.results.length){const l=j.results[0].geometry.location;return {lat:l.lat,lon:l.lng,name:j.results[0].formatted_address};}
+  return null;
+}
+
+/* ============================================================
+   MAP + LAYERS  (view fix #6/#7)
+   ============================================================ */
+let map, marker, greenOverlay=null, greenLegend=null, currentView="satellite";
+let esriLayer, googLayer, osmLayer, gibsLayer=null;
+let lastPoint=null;
+
+function makeSatelliteLayer(){
+  // Esri primary; if a tile errors, swap that tile to Google satellite (fallback provider).
+  esriLayer=L.tileLayer(CFG.ESRI,{maxZoom:19,crossOrigin:true,attribution:"Imagery © Esri, Maxar, Earthstar"});
+  esriLayer.on("tileerror",e=>{ if(e.tile && !e.tile._fb){ e.tile._fb=1;
+    const c=e.coords; e.tile.src=CFG.GOOG_SAT.replace("{x}",c.x).replace("{y}",c.y).replace("{z}",c.z);} });
+  return esriLayer;
+}
+function initMap(){
+  map=L.map("map",{center:CFG.START,zoom:CFG.START_Z,zoomControl:false,attributionControl:true,zoomSnap:.5});
+  esriLayer=makeSatelliteLayer().addTo(map);
+  googLayer=L.tileLayer(CFG.GOOG_SAT,{maxZoom:20,attribution:"Imagery © Google"});
+  osmLayer=L.tileLayer(CFG.OSM,{maxZoom:19,crossOrigin:true,attribution:"© OpenStreetMap"});
+  L.control.scale({imperial:false,position:"bottomright"}).addTo(map);
+  marker=L.marker(CFG.START,{icon:pinIcon()}).addTo(map);
+  map.on("click",onMapClick);
+  map.on("moveend",()=>{ syncHash(); if(currentView==="green")drawGreen(); else if(currentView==="plant")schedulePlantRedraw(); });
+  map.on("zoomend",()=>{ if(currentView==="green")drawGreen(); else if(currentView==="plant")schedulePlantRedraw(); });
+  // deep-link
+  const h=parseHash(); if(h){ map.setView([h.lat,h.lon],h.z||16); analyse(h.lat,h.lon);}
+}
+function pinIcon(){return L.divIcon({className:"",iconSize:[30,40],iconAnchor:[15,38],html:
+  '<div style="width:26px;height:26px;border-radius:50% 50% 50% 0;transform:rotate(-45deg);background:linear-gradient(135deg,#12b981,#2f7ef0);border:3px solid #fff;box-shadow:0 6px 14px -3px rgba(0,0,0,.5);margin:0 auto"></div>'});}
+
+function setView(v){
+  currentView=v;
+  $$(".viewbtn").forEach(b=>b.classList.toggle("active",b.dataset.view===v));
+  $("#timebar").classList.toggle("show",v==="time");
+  // clear green overlay unless green view
+  if(v!=="green"&&greenOverlay){map.removeLayer(greenOverlay);greenOverlay=null;killLegend();}
+  if(v!=="plant")clearPlant();
+  if(v==="satellite"){ ensureBase(esriLayer); }
+  else if(v==="green"){ ensureBase(esriLayer); drawGreen(); }
+  else if(v==="plant"){ ensureBase(esriLayer); enterPlant(); }
+  else if(v==="time"){ ensureBase(esriLayer); initTimeMachine(); }
+  else if(v==="street"){ openStreet(); revertViewBtn(); }
+  else if(v==="traffic"){ openTraffic(); revertViewBtn(); }
+}
+function revertViewBtn(){ // street/traffic are modals, keep the underlying view highlighted
+  $$(".viewbtn").forEach(b=>b.classList.toggle("active",b.dataset.view==="satellite"||b.dataset.view===currentBase));
+}
+let currentBase="satellite";
+function ensureBase(layer){ [esriLayer,googLayer,osmLayer,gibsLayer].forEach(l=>{if(l&&l!==layer&&map.hasLayer(l))map.removeLayer(l);}); if(layer&&!map.hasLayer(layer))layer.addTo(map); currentBase="satellite"; }
+
+/* ---------- Green view (real imagery vegetation index, #2) ---------- */
+function lon2x(lon,z){return Math.floor((lon+180)/360*Math.pow(2,z));}
+function lat2y(lat,z){const r=lat*Math.PI/180;return Math.floor((1-Math.log(Math.tan(r)+1/Math.cos(r))/Math.PI)/2*Math.pow(2,z));}
+function x2lon(x,z){return x/Math.pow(2,z)*360-180;}
+function y2lat(y,z){const n=Math.PI-2*Math.PI*y/Math.pow(2,z);return 180/Math.PI*Math.atan(0.5*(Math.exp(n)-Math.exp(-n)));}
+function loadTile(z,x,y){return new Promise(res=>{const i=new Image();i.crossOrigin="anonymous";let d=false;const f=v=>{if(!d){d=true;res(v);}};i.onload=()=>f(i);i.onerror=()=>f(null);setTimeout(()=>f(null),9000);i.src=CFG.ESRI.replace("{z}",z).replace("{x}",x).replace("{y}",y);});}
+// Visible-band vegetation index (VARI-style) — a genuine, if RGB-limited, greenness measure.
+function vegScore(r,g,b){const denom=(g+r-b)||1;const vari=(g-r)/denom;return (2*g-r-b)>22 && g>r+6 && g>b+4 ? clamp((vari+.1)/.5,0,1):0;}
+function heatColor(f){if(f<.08)return[239,68,68];if(f<.2)return[245,120,50];if(f<.34)return[245,190,60];if(f<.5)return[130,200,90];if(f<.65)return[45,170,90];return[15,110,60];}
+
+async function drawGreen(){
+  let z=clamp(Math.round(map.getZoom()),12,17);
+  const b=map.getBounds();
+  const xmin=lon2x(b.getWest(),z),xmax=lon2x(b.getEast(),z),ymin=lat2y(b.getNorth(),z),ymax=lat2y(b.getSouth(),z);
+  const cols=xmax-xmin+1,rows=ymax-ymin+1;
+  if(cols*rows>40){toast("Zoom in to render the green heatmap");return;}
+  const W=cols*256,H=rows*256,src=document.createElement("canvas");src.width=W;src.height=H;
+  const sc=src.getContext("2d",{willReadFrequently:true});let any=false;const jobs=[];
+  for(let ty=ymin;ty<=ymax;ty++)for(let tx=xmin;tx<=xmax;tx++)jobs.push(loadTile(z,tx,ty).then(im=>{if(im){any=true;sc.drawImage(im,(tx-xmin)*256,(ty-ymin)*256);}}));
+  await Promise.all(jobs);if(currentView!=="green")return;if(!any){toast("Imagery unavailable here");return;}
+  let im;try{im=sc.getImageData(0,0,W,H);}catch(e){toast("Imagery blocked by CORS");return;}
+  const d=im.data,CELL=44,gc=Math.floor(W/CELL),gr=Math.floor(H/CELL);
+  const out=document.createElement("canvas");out.width=W;out.height=H;const oc=out.getContext("2d");
+  for(let cy=0;cy<gr;cy++)for(let cx=0;cx<gc;cx++){let s=0,t=0;
+    for(let py=cy*CELL;py<(cy+1)*CELL;py+=2)for(let px=cx*CELL;px<(cx+1)*CELL;px+=2){const i=(py*W+px)*4,r=d[i],g=d[i+1],bl=d[i+2];const br=(r+g+bl)/3;if(br<16||br>244)continue;t++;s+=vegScore(r,g,bl);}
+    if(t<40)continue;const f=s/t,[cr,cg,cb]=heatColor(f);oc.fillStyle="rgba("+cr+","+cg+","+cb+",.55)";oc.fillRect(cx*CELL,cy*CELL,CELL,CELL);}
+  if(greenOverlay)map.removeLayer(greenOverlay);
+  const bounds=L.latLngBounds([y2lat(ymin,z),x2lon(xmin,z)],[y2lat(ymax+1,z),x2lon(xmax+1,z)]);
+  greenOverlay=L.imageOverlay(out.toDataURL(),bounds,{opacity:1,interactive:false}).addTo(map);
+  makeLegend();
+}
+function makeLegend(){if(greenLegend)return;const el=document.createElement("div");el.id="greenLegend";greenLegend=el;
+  el.style.cssText="position:absolute;left:14px;bottom:88px;z-index:900;padding:9px 11px;border-radius:12px;font:700 10.5px Manrope,sans-serif;";
+  el.className="glass";el.innerHTML='<div style="font-family:Sora;font-size:11px;margin-bottom:5px">Vegetation density</div><div style="display:flex;height:10px;border-radius:5px;overflow:hidden;border:1px solid var(--line)"><i style="flex:1;background:#ef4444"></i><i style="flex:1;background:#f5b23c"></i><i style="flex:1;background:#82c85a"></i><i style="flex:1;background:#2daa5a"></i><i style="flex:1;background:#0f6e3c"></i></div><div style="display:flex;justify-content:space-between;margin-top:3px;color:var(--ink-soft)"><span>sparse</span><span>dense</span></div>';
+  $("#map").appendChild(el);}
+function killLegend(){if(greenLegend){greenLegend.remove();greenLegend=null;}}
+
+/* ============================================================
+   PLANTING-PRIORITY VIEW — GREEN / RED / YELLOW on REAL data
+   GREEN = measured vegetation (satellite VARI, per-pixel)
+   RED   = bare & plantable: low vegetation AND not building/road/water (OSM)
+   YELLOW= has green but the TRAINED ENGINE forecasts it will decline
+           (from /api/greenloss ndvi_pred_delta, NOT a snapshot)
+   ============================================================ */
+let plantOverlay=null, yellowLayer=null, plantLegend=null;
+const PLANT={GREEN_FRAC:0.30, BARE_FRAC:0.12, _total:null, _osm:true};
+function lonToFx(lon,z){return (lon+180)/360*Math.pow(2,z);}
+function latToFy(lat,z){const r=lat*Math.PI/180;return (1-Math.log(Math.tan(r)+1/Math.cos(r))/Math.PI)/2*Math.pow(2,z);}
+
+// Blocks (cy*gc+cx) that contain OSM buildings / roads / water -> NOT bare ground.
+async function osmBuiltBlocks(bounds,z,xmin,ymin,CELL,gc,gr){
+  const S=bounds.getSouth(),W=bounds.getWest(),N=bounds.getNorth(),E=bounds.getEast();
+  const q=`[out:json][timeout:25];(way[building](${S},${W},${N},${E});way[highway](${S},${W},${N},${E});way[natural=water](${S},${W},${N},${E});way[waterway](${S},${W},${N},${E});relation[natural=water](${S},${W},${N},${E}););out geom;`;
+  const built=new Set();
+  for(const ep of CFG.OVERPASS){
+    const j=await getJSON(ep,overpassReq(q),25000);
+    if(j&&j.elements){
+      const blk=(lat,lon)=>[Math.floor(((lonToFx(lon,z)-xmin)*256)/CELL),Math.floor(((latToFy(lat,z)-ymin)*256)/CELL)];
+      const mark=(cx,cy,buf)=>{for(let dy=-buf;dy<=buf;dy++)for(let dx=-buf;dx<=buf;dx++){const nx=cx+dx,ny=cy+dy;if(nx>=0&&nx<gc&&ny>=0&&ny<gr)built.add(ny*gc+nx);}};
+      for(const el of j.elements){const geom=el.geometry||[];if(!geom.length)continue;
+        if(el.tags&&el.tags.highway){ // roads: buffered line
+          for(let i=0;i<geom.length;i++){const[cx,cy]=blk(geom[i].lat,geom[i].lon);mark(cx,cy,1);
+            if(i>0){const a=geom[i-1],b=geom[i];for(let s=1;s<6;s++){const[px,py]=blk(a.lat+(b.lat-a.lat)*s/6,a.lon+(b.lon-a.lon)*s/6);mark(px,py,1);}}}
+        } else { // building / water polygon: FILL its block bounding box (excludes interiors)
+          let minx=1e9,miny=1e9,maxx=-1e9,maxy=-1e9;
+          for(const g of geom){const[cx,cy]=blk(g.lat,g.lon);minx=Math.min(minx,cx);maxx=Math.max(maxx,cx);miny=Math.min(miny,cy);maxy=Math.max(maxy,cy);}
+          for(let cy=Math.max(0,miny);cy<=Math.min(gr-1,maxy);cy++)for(let cx=Math.max(0,minx);cx<=Math.min(gc-1,maxx);cx++)built.add(cy*gc+cx);
+        }}
+      return built;
+    }
+  }
+  return null; // OSM unavailable -> caller degrades red to veg-only + says so
+}
+
+async function drawPlant(){
+  const z=clamp(Math.round(map.getZoom()),13,17), b=map.getBounds();
+  const xmin=lon2x(b.getWest(),z),xmax=lon2x(b.getEast(),z),ymin=lat2y(b.getNorth(),z),ymax=lat2y(b.getSouth(),z);
+  const cols=xmax-xmin+1,rows=ymax-ymin+1;
+  // too zoomed out for per-pixel green/red — show only the (vector) yellow layer
+  if(cols*rows>40){ if(plantOverlay){map.removeLayer(plantOverlay);plantOverlay=null;} return; }
+  const W=cols*256,H=rows*256,src=document.createElement("canvas");src.width=W;src.height=H;
+  const sc=src.getContext("2d",{willReadFrequently:true});let any=false;const jobs=[];
+  for(let ty=ymin;ty<=ymax;ty++)for(let tx=xmin;tx<=xmax;tx++)jobs.push(loadTile(z,tx,ty).then(im=>{if(im){any=true;sc.drawImage(im,(tx-xmin)*256,(ty-ymin)*256);}}));
+  await Promise.all(jobs); if(currentView!=="plant")return; if(!any){toast("Imagery unavailable here");return;}
+  let im;try{im=sc.getImageData(0,0,W,H);}catch(e){toast("Imagery blocked by CORS");return;}
+  const d=im.data,CELL=44,gc=Math.floor(W/CELL),gr=Math.floor(H/CELL);
+  const bounds=L.latLngBounds([y2lat(ymin,z),x2lon(xmin,z)],[y2lat(ymax+1,z),x2lon(xmax+1,z)]);
+  toast("Reading OpenStreetMap buildings & roads…");
+  const built=await osmBuiltBlocks(b,z,xmin,ymin,CELL,gc,gr);
+  if(currentView!=="plant")return; PLANT._osm=(built!==null);
+  const out=document.createElement("canvas");out.width=W;out.height=H;const oc=out.getContext("2d");
+  for(let cy=0;cy<gr;cy++)for(let cx=0;cx<gc;cx++){let s=0,t=0;
+    for(let py=cy*CELL;py<(cy+1)*CELL;py+=2)for(let px=cx*CELL;px<(cx+1)*CELL;px+=2){const i=(py*W+px)*4,r=d[i],g=d[i+1],bl=d[i+2];const br=(r+g+bl)/3;if(br<16||br>244)continue;t++;s+=vegScore(r,g,bl);}
+    if(t<40)continue;const f=s/t,isBuilt=built&&built.has(cy*gc+cx);
+    if(f>=PLANT.GREEN_FRAC){oc.fillStyle="rgba(34,170,90,.5)";oc.fillRect(cx*CELL,cy*CELL,CELL,CELL);}
+    else if(f<PLANT.BARE_FRAC&&!isBuilt){oc.fillStyle="rgba(239,68,68,.55)";oc.fillRect(cx*CELL,cy*CELL,CELL,CELL);}
+  }
+  if(plantOverlay)map.removeLayer(plantOverlay);
+  plantOverlay=L.imageOverlay(out.toDataURL(),bounds,{opacity:1,interactive:false}).addTo(map);
+  plantLegendShow();
+}
+
+// Entering the Plant view: draw the (cheap, city-wide) yellow forecast first and
+// frame it, then the zoom-gated green/red detail. Yellow persists across pans.
+let _plantFitted=false;
+async function enterPlant(){
+  _plantFitted=false;
+  await drawYellow();
+  if(yellowLayer && yellowLayer.getLayers().length && !_plantFitted){
+    _plantFitted=true;
+    map.fitBounds(yellowLayer.getBounds().pad(0.1),{animate:false});  // no-anim: avoids a race with the redraw below
+    toast("Yellow = engine forecast (city-wide). Zoom in for green/red detail.");
+  }
+  drawPlant();
+  plantLegendShow();
+}
+// Debounced green/red redraw so panning doesn't fire a 25 s OSM fetch every frame.
+let _plantTimer=null;
+function schedulePlantRedraw(){ clearTimeout(_plantTimer); _plantTimer=setTimeout(()=>{ if(currentView==="plant")drawPlant(); },600); }
+
+// YELLOW: engine forecast cells (currently green, predicted to lose it).
+async function drawYellow(){
+  if(yellowLayer){map.removeLayer(yellowLayer);yellowLayer=null;}
+  const g=await getJSON(CFG.ENGINE_URL+"/api/greenloss",{},8000);
+  if(!g||!g.features){toast("Engine offline — yellow (forecast) layer unavailable");PLANT._total=null;return;}
+  PLANT._total=g.total_zones;
+  let maxLoss=0.001; g.features.forEach(f=>{if(f.properties.status==="yellow")maxLoss=Math.max(maxLoss,-f.properties.ndvi_pred_delta);});
+  yellowLayer=L.featureGroup();  // featureGroup (not layerGroup) so getBounds() works for auto-fit
+  g.features.forEach(f=>{const p=f.properties; if(p.status!=="yellow"||!f.geometry)return;
+    const ring=f.geometry.coordinates[0].map(c=>[c[1],c[0]]);
+    const op=clamp(0.28+0.5*(-p.ndvi_pred_delta)/maxLoss,0.28,0.82);
+    const poly=L.polygon(ring,{color:"#ca8a04",weight:1,fillColor:"#f59e0b",fillOpacity:op,interactive:true});
+    poly.on("click",e=>{L.DomEvent.stopPropagation(e);const c=poly.getBounds().getCenter();analyseCell(c.lat,c.lng,p);});
+    yellowLayer.addLayer(poly);});
+  yellowLayer.addTo(map);
+}
+
+// Click-through: open the panel, and for a yellow cell inject its REAL engine numbers.
+function analyseCell(lat,lon,props){
+  analyse(lat,lon).then(()=>{
+    if(!props)return; const host=$("#narrText"); if(!host||!host.parentNode)return;
+    const box=document.createElement("div");
+    box.style.cssText="margin-top:9px;padding:9px 11px;border-radius:10px;background:var(--bg2);font-size:11.5px;font-weight:700;line-height:1.55";
+    const slope=props.ndvi_slope_per_year, sl=(slope>0?"+":"")+slope;
+    box.innerHTML=`<span style="color:var(--brand-dk);font-weight:800">Trained-engine forecast · this cell</span><br>`+
+      `Priority rank <b>#${props.rank}${PLANT._total?" of "+PLANT._total:""}</b> · score <b>${props.score}</b><br>`+
+      `NDVI now <b>${props.ndvi_latest}</b> · trend <b>${sl}/yr</b> · predicted yr-on-yr <b style="color:#b45309">${props.ndvi_pred_delta}</b> (green cover forecast to decline)`;
+    host.parentNode.appendChild(box);
+  });
+}
+
+function clearPlant(){
+  if(plantOverlay){map.removeLayer(plantOverlay);plantOverlay=null;}
+  if(yellowLayer){map.removeLayer(yellowLayer);yellowLayer=null;}
+  if(plantLegend){plantLegend.remove();plantLegend=null;}
+}
+function plantLegendShow(){
+  if(plantLegend)plantLegend.remove();
+  const el=document.createElement("div");el.id="plantLegend";plantLegend=el;el.className="glass";
+  el.style.cssText="position:absolute;left:14px;bottom:88px;z-index:900;padding:10px 12px;border-radius:12px;font:700 11px Manrope,sans-serif;max-width:260px;";
+  const redNote=PLANT._osm?"bare &amp; not built/road/water":"low vegetation only (OSM unavailable — buildings NOT excluded)";
+  el.innerHTML=`<div style="font-family:Sora;font-size:12px;margin-bottom:6px">Planting priority</div>`+
+    `<div style="display:flex;align-items:center;gap:7px;margin:3px 0"><i style="width:13px;height:13px;border-radius:3px;background:rgba(34,170,90,.7);flex:none"></i>Green — has vegetation</div>`+
+    `<div style="display:flex;align-items:center;gap:7px;margin:3px 0"><i style="width:13px;height:13px;border-radius:3px;background:rgba(239,68,68,.75);flex:none"></i>Red — plantable (${redNote})</div>`+
+    `<div style="display:flex;align-items:center;gap:7px;margin:3px 0"><i style="width:13px;height:13px;border-radius:3px;background:rgba(245,158,11,.8);flex:none"></i>Yellow — green now, <b>forecast to decline</b></div>`+
+    `<div style="margin-top:7px;padding-top:6px;border-top:1px solid var(--line);color:var(--ink-soft);font-weight:600;font-size:10px;line-height:1.45">Green/red: <b>measured</b> (Esri imagery + OSM). Yellow: <b>trained-engine forecast</b> (real NDVI history). Click a cell for the full report.</div>`;
+  $("#map").appendChild(el);
+}
+
+// vegetation fraction of a 3x3 tile box around a point (used by the engine)
+async function sampleVeg(lat,lon){
+  const z=16,xc=lon2x(lon,z),yc=lat2y(lat,z);
+  const cv=document.createElement("canvas");cv.width=768;cv.height=768;const ctx=cv.getContext("2d",{willReadFrequently:true});let any=false;const jobs=[];
+  for(let dy=-1;dy<=1;dy++)for(let dx=-1;dx<=1;dx++)jobs.push(loadTile(z,xc+dx,yc+dy).then(im=>{if(im){any=true;ctx.drawImage(im,(dx+1)*256,(dy+1)*256);}}));
+  await Promise.all(jobs);if(!any)return null;
+  let data;try{data=ctx.getImageData(0,0,768,768).data;}catch(e){return null;}
+  let s=0,t=0;for(let i=0;i<data.length;i+=4){const r=data[i],g=data[i+1],b=data[i+2];const br=(r+g+b)/3;if(br<16||br>244)continue;t++;s+=vegScore(r,g,b);}
+  const mpp=156543.034*Math.cos(lat*Math.PI/180)/Math.pow(2,z);
+  return {frac:t?s/t:0,sideKm:round(mpp*768/1000,2)};
+}
+
+/* ============================================================
+   DATA FETCHERS  (all real, keyless)  — #8
+   ============================================================ */
+async function getWeatherAir(lat,lon){
+  const w=getJSON("https://api.open-meteo.com/v1/forecast?latitude="+lat+"&longitude="+lon+
+    "&current=temperature_2m,relative_humidity_2m,apparent_temperature,precipitation,cloud_cover,wind_speed_10m,shortwave_radiation,uv_index"+
+    "&daily=precipitation_sum,temperature_2m_max&timezone=auto&forecast_days=1");
+  const a=getJSON("https://air-quality-api.open-meteo.com/v1/air-quality?latitude="+lat+"&longitude="+lon+
+    "&current=us_aqi,pm2_5,pm10,nitrogen_dioxide,ozone&timezone=auto");
+  const e=getJSON("https://api.open-meteo.com/v1/elevation?latitude="+lat+"&longitude="+lon);
+  const [wr,ar,er]=await Promise.all([w,a,e]);
+  return {w:wr&&wr.current?wr.current:null, wd:wr&&wr.daily?wr.daily:null,
+          aq:ar&&ar.current?ar.current:null, elev:er&&er.elevation?er.elevation[0]:null};
+}
+async function reverseGeocode(lat,lon){
+  const j=await getJSON("https://nominatim.openstreetmap.org/reverse?format=json&zoom=16&addressdetails=1&lat="+lat+"&lon="+lon,{headers:{"Accept":"application/json"}});
+  if(!j)return null;const a=j.address||{};
+  return {name:(j.display_name||"").split(",").slice(0,2).join(", "),
+    full:j.display_name||"", type:(j.type||j.category||"").replace(/_/g," "),
+    city:a.city||a.town||a.village||a.suburb||a.county||"", state:a.state||"", country:a.country||"",
+    cls:j.category||"", osmType:j.type||""};
+}
+// Overpass count-based feature census — fast + real.
+async function getOSM(lat,lon){
+  const q=`[out:json][timeout:20];
+node(around:400,${lat},${lon})[natural=tree];out count;
+way(around:400,${lat},${lon})[building];out count;
+way(around:400,${lat},${lon})[highway];out count;
+way(around:800,${lat},${lon})[leisure=park];out count;
+way(around:1000,${lat},${lon})[natural=water];out count;
+way(around:1000,${lat},${lon})[waterway];out count;
+node(around:1000,${lat},${lon})[amenity~"^(school|college|university|kindergarten)$"];out count;
+node(around:2000,${lat},${lon})[amenity~"^(hospital|clinic|doctors)$"];out count;
+node(around:2000,${lat},${lon})[railway~"^(station|halt)$"];out count;
+node(around:1500,${lat},${lon})[railway=subway_entrance];out count;
+node(around:600,${lat},${lon})[shop];out count;
+way(around:500,${lat},${lon})[landuse~"industrial|quarry|landfill"];out count;`;
+  for(const ep of CFG.OVERPASS){
+    const j=await getJSON(ep,overpassReq(q),22000);
+    if(j&&j.elements){
+      const c=j.elements.filter(e=>e.type==="count").map(e=>+((e.tags&&e.tags.total)||0));
+      if(c.length>=12) return {trees:c[0],buildings:c[1],roads:c[2],parks:c[3],water:c[4],waterway:c[5],
+        schools:c[6],hospitals:c[7],stations:c[8],metro:c[9],shops:c[10],industrial:c[11]};
+    }
+  }
+  return null;
+}
+
+/* ============================================================
+   SCORING ENGINE  (transparent models over real data)  — #2/#8
+   ============================================================ */
+function score(lat,lon,d){
+  const veg = d.veg? d.veg.frac : 0;              // 0..1 imagery greenness
+  const vegPct = round(veg*100);
+  const osm = d.osm||{};
+  const trees=osm.trees||0, bld=osm.buildings||0, roads=osm.roads||0, parks=osm.parks||0,
+        water=(osm.water||0)+(osm.waterway||0), schools=osm.schools||0, hosp=osm.hospitals||0,
+        stn=(osm.stations||0)+(osm.metro||0), shops=osm.shops||0, ind=osm.industrial||0;
+  const aqi = d.aq? d.aq.us_aqi : null;
+  const temp = d.w? d.w.temperature_2m : null;
+  const rad = d.w? d.w.shortwave_radiation : null;   // W/m²
+  const cloud = d.w? d.w.cloud_cover : 40;
+  const rain = d.wd? d.wd.precipitation_sum[0] : 0;
+  const elev = d.elev;
+
+  // densities within the ~0.5 km² 400m circle
+  const areaHa = Math.PI*0.4*0.4*100;               // ≈50 ha
+  const bldDens = bld/areaHa;                        // buildings per ha
+  const treeDens = trees/areaHa;                     // trees per ha
+  const builtFrac = clamp(bldDens/22,0,1);           // 22 bld/ha ≈ fully built
+  const impervious = clamp(builtFrac*0.85 + (roads/900), 0,1);
+
+  // --- headline scores 0..100 ---
+  // Canopy-led: satellite imagery is the reliable measured signal; OSM tree counts are
+  // sparse in India so they only add a small bonus rather than driving the score.
+  const green = round(clamp(vegPct*0.82 + (parks>0?8:0) + (water>0?5:0) + clamp(treeDens*2,0,8),0,100));
+  const heatIsland = round(clamp(builtFrac*55 + (100-vegPct)*0.3 + (temp!=null?clamp((temp-30)*3,0,15):5),0,100));
+  const cooling = round(clamp(vegPct*0.6 + (water>0?18:0) + clamp(treeDens*5,0,22),0,100));
+  const walk = round(clamp((schools+hosp)*4 + shops*1.2 + clamp(roads/6,0,25) + (parks>0?12:0) + (stn>0?14:0),0,100));
+  const biodiversity = round(clamp(clamp(treeDens*7,0,40) + (parks>0?20:0) + (water>0?22:0) + vegPct*0.2,0,100));
+  const airContribution = round(clamp(green*0.7 + (aqi!=null?clamp((160-aqi)/2,0,30):15),0,100));
+  const permeable = round(clamp(100 - impervious*100 + vegPct*0.2,0,100));
+  const solar = round(clamp((rad!=null?rad/9:55) + (100-cloud)*0.15,0,100));    // rough solar suitability
+  const floodRisk = round(clamp((elev!=null?clamp((30-elev)/30*40,0,40):15) + (water>0?18:0) + clamp(impervious*35,0,35) + clamp(rain*2,0,20),0,100));
+  const urbanization = round(clamp(builtFrac*70 + (roads/12) + shops*0.6,0,100));
+  const treeEst = Math.round(trees + veg*areaHa*110); // canopy-derived tree estimate (~110/ha at full cover)
+  const carbonT = round(treeEst*21/1000,2);           // t CO2/yr, modelled from canopy (avg ~21 kg/tree/yr)
+  const noise = round(clamp(roads/6 + bldDens*1.4 + ind*8 + (stn>0?10:0),0,100));
+  const deficiency = round(clamp(100-green + heatIsland*0.3 + (aqi!=null?clamp((aqi-60)/3,0,20):0),0,100));
+
+  // suitability
+  const living = round(clamp(green*0.35 + walk*0.25 + (aqi!=null?clamp((150-aqi)/2,0,30):15) + (100-heatIsland)*0.15,0,100));
+  const business = round(clamp(walk*0.4 + shops*1.4 + (stn>0?15:0) + urbanization*0.25,0,100));
+  const farming = round(clamp(vegPct*0.4 + (water>0?22:0) + (100-urbanization)*0.3 + (rain>0?12:0),0,100));
+  const growth = round(clamp(urbanization*0.4 + walk*0.2 + (stn>0?18:0) + (100-green)*0.15,0,100));
+
+  return {vegPct,trees,treeEst,bld,roads,parks,water,schools,hosp,stn,shops,ind,bldDens:round(bldDens,1),treeDens:round(treeDens,1),
+    aqi,temp,rad,cloud,rain,elev,builtFrac,impervious:round(impervious*100),
+    green,heatIsland,cooling,walk,biodiversity,airContribution,permeable,solar,floodRisk,urbanization,
+    carbonT,noise,deficiency,living,business,farming,growth};
+}
+function grade(v){if(v>=80)return["Excellent","#12b981"];if(v>=65)return["Good","#4ade80"];if(v>=45)return["Moderate","#f5a623"];if(v>=28)return["Poor","#f97316"];return["Critical","#ef4444"];}
+function barCol(v){return grade(v)[1];}
+function riskCol(v){if(v>=66)return"#ef4444";if(v>=40)return"#f5a623";return"#12b981";}
+
+/* ---------- dynamic narrative (built-in "AI") — #2 ---------- */
+function narrative(s,place){
+  const parts=[];
+  const cover = s.green>=65?"strong":s.green>=45?"moderate":s.green>=28?"limited":"very low";
+  const aqiTxt = s.aqi==null?"":s.aqi<=50?"clean air":s.aqi<=100?"moderate air quality":s.aqi<=150?"air that's unhealthy for sensitive groups":"poor air quality";
+  parts.push(`${place||"This location"} shows ${cover} vegetation coverage (${s.vegPct}% canopy in view, about ${fmt(s.trees)} mapped trees${s.parks?", "+s.parks+" park"+(s.parks>1?"s":"")+" nearby":""})`+(aqiTxt?` against ${aqiTxt} (AQI ${s.aqi})`:"")+".");
+  if(s.heatIsland>=60) parts.push(`Dense built-up cover (${s.bldDens} buildings/ha, ${s.impervious}% impervious surface) is driving a pronounced urban heat-island effect${s.temp!=null?`, with ${round(s.temp)}°C recorded now`:""}.`);
+  else if(s.heatIsland>=40) parts.push(`A mix of buildings and greenery keeps the heat-island effect moderate${s.temp!=null?` (${round(s.temp)}°C now)`:""}, but shade is uneven.`);
+  else parts.push(`Low building density and healthy vegetation keep surface temperatures comparatively cool.`);
+  // actionable, quantified closer
+  if(s.green<55){const add=Math.max(80,Math.round((55-s.green)*s.trees/Math.max(s.green,8))+120);
+    parts.push(`Adding roughly ${fmt(Math.round(add/10)*10)} roadside and open-plot trees (about +20% canopy) could cut peak summer temperatures by an estimated ${s.heatIsland>=60?"2–3":"1–2"}°C, lift the green score toward ${clamp(s.green+16,0,100)}, and absorb ~${round(add*21/1000,1)} t of CO₂ each year at maturity.`);}
+  else parts.push(`Cover is already healthy — priority shifts from planting volume to protecting mature canopy, diversifying species for biodiversity, and maintaining permeable ground (${s.permeable}%).`);
+  return parts.join(" ");
+}
+// Replace the built-in narrative + curated species with the TRAINED GreenGrid
+// engine's output (species KB + soil/pollution logic, memory-trained model).
+// Fails safe: if the engine server is unreachable, the built-in content stays.
+async function upgradeFromEngine(s,place,lat,lon){
+  const tag=$("#aiTag");
+  const rec=await engineRecommend(s,lat,lon);
+  if(!rec || !Array.isArray(rec.species) || !rec.species.length){
+    if(tag) tag.innerHTML=tag.innerHTML.replace(/GreenGrid engine|live/i,"built-in model");
+    return;
+  }
+  engineOnline=true;
+  const el=$("#narrText");
+  if(el && rec.justification) el.textContent=rec.justification;
+  if(tag) tag.innerHTML=tag.innerHTML.replace(/built-in model|live/i,"GreenGrid engine · trained");
+  const list=$("#specList"), src=$("#specSrc");
+  if(list){
+    list.innerHTML=rec.species.map(engineSpecCard).join("");
+    if(src) src.textContent="Species · trained GreenGrid engine";
+  }
+}
+function engineSpecCard(sp){
+  const chips=[sp.canopy?sp.canopy+" canopy":"", sp.pollution_tolerance?"pollution "+sp.pollution_tolerance:"",
+    sp.water_need?sp.water_need+" water":"", sp.native_status].filter(Boolean)
+    .map(c=>`<span class="chip">${c}</span>`).join("");
+  return `<div class="spec"><h4><span>${sp.common}</span></h4><div class="bot">${sp.botanical||""}</div>`+
+    `<div class="chips">${chips}</div>`+
+    (sp.context?`<div class="why">Best for: ${sp.context}${sp.soil_ph?` · soil pH ${sp.soil_ph}`:""}</div>`:"")+`</div>`;
+}
+
+/* ---------- suggestion engine — #3 ---------- */
+function suggestions(s){
+  const out=[];
+  const push=(o)=>out.push(o);
+  if(s.green<55){const n=Math.max(80,Math.round((60-s.green)*8/1));
+    push({t:`Plant ${fmt(Math.round(n/10)*10)} roadside & native trees`,pri:s.green<35?"High":"Medium",
+      aqi:`−${round(n*0.02,0)}–${round(n*0.035,0)} AQI`,temp:`−${s.heatIsland>=60?"2.0–3.0":"1.0–2.0"}°C`,
+      cost:inr(n*450),co2:`${round(n*21/1000,1)} t/yr`,time:"1–3 monsoons",why:"Roadside canopy is the fastest lever for shade, dust capture and cooling."});}
+  if(s.parks<1 || s.vegPct<20){push({t:"Convert a vacant plot into an urban micro-forest",pri:"High",
+    aqi:"−4–8 AQI",temp:"−1.5–2.5°C",cost:inr(900000),co2:"6–12 t/yr",time:"2–4 yrs",why:"A dense Miyawaki-style plot builds biodiversity and a heat sink quickly."});}
+  if(s.heatIsland>=55){push({t:"Add green / cool roofs on large buildings",pri:"Medium",
+    aqi:"−1–3 AQI",temp:"−1–2°C indoor",cost:inr(1200)+"/m²",co2:"1–3 t/yr",time:"3–6 months",why:"Reflective and planted roofs cut rooftop heat gain and stormwater runoff."});}
+  if(s.impervious>=60){push({t:"Replace asphalt with permeable pavement",pri:"Medium",
+    aqi:"−1–2 AQI",temp:"−1°C surface",cost:inr(1800)+"/m²",co2:"low",time:"6–12 months",why:"Recharges groundwater, lowers surface temperature and reduces flood risk."});
+    push({t:"Add rain gardens & bioswales along roads",pri:s.floodRisk>=55?"High":"Low",
+      aqi:"−1 AQI",temp:"−0.5°C",cost:inr(300000),co2:"1–2 t/yr",time:"3–8 months",why:"Captures runoff, filters pollutants and greens the streetscape."});}
+  if(s.walk<45){push({t:"Create shaded cycling & walking corridors",pri:"Medium",
+    aqi:"−2–4 AQI",temp:"−1–2°C route",cost:inr(2500000),co2:"3–6 t/yr",time:"1–2 yrs",why:"Shifts short trips off cars, reducing tailpipe emissions and heat."});}
+  if(s.biodiversity<45){push({t:"Prioritise native, pollinator-friendly species",pri:"Low",
+    aqi:"−1 AQI",temp:"neutral",cost:inr(150)+"/sapling",co2:"varies",time:"ongoing",why:"Native stock survives the local climate and supports wildlife."});}
+  if(!out.length) push({t:"Maintain & monitor existing canopy",pri:"Low",aqi:"stable",temp:"stable",cost:inr(120000)+"/yr",co2:"protected",time:"ongoing",why:"Cover is healthy — protect mature trees and keep ground permeable."});
+  const rank={High:0,Medium:1,Low:2}; return out.sort((a,b)=>rank[a.pri]-rank[b.pri]).slice(0,6);
+}
+
+/* ---------- land value estimate + ownership honesty — #1 ---------- */
+const CITY_RATE={ // indicative ₹ per sq.m base residential circle-rate-ish anchors (estimate only)
+  "mumbai":230000,"delhi":150000,"new delhi":150000,"bengaluru":95000,"bangalore":95000,"gurugram":110000,
+  "hyderabad":75000,"chennai":85000,"pune":88000,"kolkata":78000,"ahmedabad":62000,"surat":48000,
+  "jaipur":45000,"lucknow":42000,"indore":40000,"default":38000 };
+function landValue(s,geo){
+  const cityKey=(geo&&geo.city||"").toLowerCase().trim();
+  let base=CITY_RATE[cityKey]||CITY_RATE[(geo&&geo.state||"").toLowerCase()]||CITY_RATE.default;
+  // multipliers from real proximity/context
+  let m=1, reasons=[];
+  if(s.stn>0){m*=1.18;reasons.push("rail/metro access");}
+  if(s.hosp>0){m*=1.06;reasons.push("healthcare nearby");}
+  if(s.schools>=2){m*=1.07;reasons.push("schools nearby");}
+  if(s.shops>=15){m*=1.15;reasons.push("commercial activity");}else if(s.shops>=5){m*=1.07;}
+  if(s.roads>=60){m*=1.06;reasons.push("good road access");}
+  if(s.parks>0||s.green>=55){m*=1.05;reasons.push("green surroundings");}
+  if(s.ind>0){m*=0.9;reasons.push("industrial adjacency (−)");}
+  if(s.floodRisk>=60){m*=0.9;reasons.push("flood exposure (−)");}
+  if(s.urbanization>=70){m*=1.1;}else if(s.urbanization<25){m*=0.8;reasons.push("low development (−)");}
+  const perSqm=Math.round(base*m);
+  const perSqft=Math.round(perSqm/10.7639);
+  const plot=1000; // nominal reference plot m²
+  const total=perSqm*plot;
+  const low=Math.round(total*0.72), high=Math.round(total*1.28); // honest ±28% band
+  // confidence: capped low — this is an indicative model, not a market valuation
+  let conf=44; if(s.aqi!=null)conf+=6; if(s.osmOk)conf+=12; if(geo&&geo.city&&CITY_RATE[(geo.city||"").toLowerCase().trim()])conf+=14; if(s.veg!=null)conf+=5;
+  conf=clamp(conf,38,82);
+  // trend from growth signals
+  const trendScore=s.growth;
+  const trend= trendScore>=62?["Increasing","📈","#12b981"]: trendScore>=42?["Stable","➡️","#f5a623"]:["Softening","📉","#ef4444"];
+  const use = landUseLabel(s,geo);
+  return {perSqm,perSqft,total,low,high,plot,conf,trend,reasons:reasons.slice(0,4),base,mult:round(m,2),use};
+}
+function landUseLabel(s,geo){
+  const c=(geo&&(geo.cls+" "+geo.osmType)||"").toLowerCase();
+  if(s.ind>0||/industrial/.test(c))return "Industrial / mixed";
+  if(/water|river|reservoir/.test(c))return "Water body";
+  if(/forest|wood|natural|park|meadow/.test(c)||s.green>=70&&s.urbanization<25)return "Green / open land";
+  if(/farm|agricultur|field/.test(c)||s.farming>=60&&s.urbanization<30)return "Agricultural";
+  if(s.shops>=12||/retail|commercial|shop|mall/.test(c))return "Commercial";
+  if(s.bldDens>=6||/residential|house|apartment/.test(c))return "Residential";
+  return "Mixed / undeveloped";
+}
+
+/* ============================================================
+   RENDER PANEL  — #8 report
+   ============================================================ */
+function ring(v){const R=42,C=2*Math.PI*R,off=C*(1-v/100),col=barCol(v);
+  return `<div class="ring"><svg width="96" height="96" viewBox="0 0 96 96"><circle cx="48" cy="48" r="${R}" fill="none" stroke="var(--bg2)" stroke-width="9"/><circle cx="48" cy="48" r="${R}" fill="none" stroke="${col}" stroke-width="9" stroke-linecap="round" stroke-dasharray="${C}" stroke-dashoffset="${off}" style="transition:stroke-dashoffset .9s cubic-bezier(.22,1,.36,1)"/></svg><div class="val"><b>${v}</b><span>Green</span></div></div>`;}
+function metric(label,value,detail,barVal,col,icon){
+  const bar=barVal!=null?`<div class="bar"><i style="width:${clamp(barVal,0,100)}%;background:${col||barCol(barVal)}"></i></div>`:"";
+  return `<div class="metric"><div class="l">${icon||""}${label}</div><div class="v">${value}</div>${detail?`<div class="d">${detail}</div>`:""}${bar}</div>`;}
+function riskMetric(label,v,txt){return `<div class="metric"><div class="l">${label}</div><div class="v" style="color:${riskCol(v)}">${v}<span style="font-size:11px;color:var(--ink-soft)"> /100</span></div><div class="d">${txt}</div><div class="bar"><i style="width:${v}%;background:${riskCol(v)}"></i></div></div>`;}
+
+function openPanel(){$("#panel").classList.add("open");}
+function skeletonPanel(place,sub){
+  $("#pTitle").textContent=place||"Analysing…";$("#pSub").textContent=sub||"Fetching real environmental data…";
+  $("#pEyebrow").textContent="Environmental Report";
+  $("#pBody").innerHTML=`<div class="hero" style="border:0;background:transparent;box-shadow:none;padding:4px 0"><div class="skel" style="width:96px;height:96px;border-radius:50%"></div><div style="flex:1"><div class="skel" style="height:18px;width:60%"></div><div class="skel" style="height:12px;width:90%;margin-top:8px"></div><div class="skel" style="height:12px;width:80%;margin-top:6px"></div></div></div>
+    <div class="mgrid" style="margin-top:16px">${Array(6).fill('<div class="skel" style="height:78px"></div>').join("")}</div>
+    <div class="skel" style="height:96px;margin-top:16px"></div>`;
+  openPanel();
+}
+async function analyse(lat,lon){
+  lastPoint=[lat,lon];
+  marker.setLatLng([lat,lon]);
+  skeletonPanel();
+  // fire everything in parallel
+  const [geo,wa,osm,veg]=await Promise.all([reverseGeocode(lat,lon),getWeatherAir(lat,lon),getOSM(lat,lon),sampleVeg(lat,lon)]);
+  const d={geo,veg,osm,aq:wa.aq,w:wa.w,wd:wa.wd,elev:wa.elev};
+  const s=score(lat,lon,d); s.osmOk=!!osm; s.veg=veg?veg.frac:null;
+  const place=geo?geo.name:round(lat,4)+", "+round(lon,4);
+  const sub=(geo&&geo.city?geo.city+(geo.state?", "+geo.state:""):"")||round(lat,4)+", "+round(lon,4);
+  lastGeo=geo; lastPlace=place;
+  renderReport(lat,lon,s,d,place,sub);
+  return {s,d,place};
+}
+function renderReport(lat,lon,s,d,place,sub){
+  $("#pEyebrow").textContent="Environmental Report";
+  $("#pTitle").textContent=place;$("#pSub").textContent=sub+(s.elev!=null?" · "+round(s.elev)+" m elev":"");
+  const [gTxt]=grade(s.green);
+  const narr=narrative(s,place);
+  let h="";
+  // hero
+  h+=`<div class="hero">${ring(s.green)}<div class="rt"><div class="grade" style="color:${barCol(s.green)}">${gTxt} green score</div><p><b>${s.vegPct}% canopy</b> measured from satellite${s.osmOk?` · ${s.parks} parks · ${fmt(s.bld)} buildings · ${fmt(s.trees)} trees mapped in OSM (often incomplete)`:" · OSM census unavailable here"}.</p></div></div>`;
+  // narrative
+  h+=`<div class="section" style="margin-top:16px"><div class="narr"><div class="ai" id="aiTag"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2l2 5 5 2-5 2-2 5-2-5-5-2 5-2z"/></svg>AI Analysis · ${aiOn()?"GreenGrid engine":"built-in model"}</div><span id="narrText">${narr}</span></div></div>`;
+
+  // green sub-scores
+  h+=`<div class="section"><h3>Green &amp; Climate Scores</h3><div class="mgrid">
+    ${metric("Canopy cover",s.vegPct+"%","measured · ~"+fmt(s.treeEst)+" trees est.",s.vegPct)}
+    ${metric("Carbon absorption",s.carbonT+" t/yr","from mapped canopy",clamp(s.carbonT*20,0,100))}
+    ${metric("Urban cooling",s.cooling,"vegetation + water",s.cooling)}
+    ${metric("Air contribution",s.airContribution,"pollution buffering",s.airContribution)}
+    ${metric("Biodiversity",s.biodiversity,"trees·parks·water",s.biodiversity)}
+    ${metric("Walkability",s.walk,"amenities + streets",s.walk)}
+    ${metric("Permeable surface",s.permeable+"%","water infiltration",s.permeable)}
+    ${metric("Green deficiency",s.deficiency,s.deficiency>=55?"needs greening":"acceptable",s.deficiency,riskCol(s.deficiency))}
+  </div></div>`;
+
+  // live environment
+  h+=`<div class="section"><h3>Live Environment</h3><div class="mgrid">
+    ${metric("Air quality",s.aqi!=null?s.aqi:"—",s.aqi!=null?aqiWord(s.aqi)+(d.aq&&d.aq.pm2_5!=null?" · PM2.5 "+round(d.aq.pm2_5):""):"unavailable",s.aqi!=null?clamp(100-s.aqi/2,0,100):null,s.aqi!=null?riskCol(clamp(s.aqi/2,0,100)):null)}
+    ${metric("Temperature",s.temp!=null?round(s.temp)+"°C":"—",d.w&&d.w.apparent_temperature!=null?"feels "+round(d.w.apparent_temperature)+"°C":"")}
+    ${metric("Humidity",d.w&&d.w.relative_humidity_2m!=null?round(d.w.relative_humidity_2m)+"%":"—","relative")}
+    ${metric("Wind",d.w&&d.w.wind_speed_10m!=null?round(d.w.wind_speed_10m)+" km/h":"—","at 10 m")}
+    ${metric("Solar potential",s.solar,(s.rad!=null?round(s.rad)+" W/m² now":"")+" · "+round(s.cloud)+"% cloud",s.solar,"#f5a623")}
+    ${metric("Rainfall (today)",s.rain!=null?round(s.rain,1)+" mm":"—","forecast sum")}
+  </div></div>`;
+
+  // risks
+  h+=`<div class="section"><h3>Risk &amp; Exposure</h3><div class="mgrid">
+    ${riskMetric("Heat-island risk",s.heatIsland,s.heatIsland>=60?"high built density":"moderate")}
+    ${riskMetric("Flood risk",s.floodRisk,s.elev!=null?round(s.elev)+" m, "+(s.water>0?"near water":"drained"):"—")}
+    ${riskMetric("Noise level",s.noise,s.roads+" road segs · "+s.ind+" industrial")}
+    ${riskMetric("Urbanization",s.urbanization,s.bldDens+" bld/ha")}
+  </div></div>`;
+
+  // suitability
+  h+=`<div class="section"><h3>Suitability Index</h3><div class="mgrid">
+    ${metric("Living",s.living,"air·green·walk",s.living)}
+    ${metric("Business",s.business,"footfall·transit",s.business)}
+    ${metric("Farming",s.farming,"soil·water proxy",s.farming)}
+    ${metric("Growth potential",s.growth,"5–10 yr outlook",s.growth,"#8b5cf6")}
+  </div></div>`;
+
+  // land value + ownership
+  const lv=landValue(s,d.geo);
+  h+=`<div class="section"><h3>Land Use &amp; Value <span style="font-weight:700;text-transform:none;letter-spacing:0;color:var(--ink-soft)">· estimate</span></h3>
+    <div class="valuebox"><div class="lab">Indicative land value · ${fmt(lv.plot)} m² plot</div>
+      <div class="amt" style="font-size:24px">${inr(lv.low)} – ${inr(lv.high)}</div>
+      <div class="meta"><span>Confidence <b>${lv.conf}%</b></span><span style="color:${lv.trend[2]}">${lv.trend[1]} ${lv.trend[0]}</span></div></div>
+    <div class="landrow"><span class="k">Land use</span><span class="v">${lv.use}</span></div>
+    <div class="landrow"><span class="k">Midpoint / m²</span><span class="v">~${inr(lv.perSqm)}</span></div>
+    <div class="landrow"><span class="k">Midpoint / sq.ft</span><span class="v">~${inr(lv.perSqft)}</span></div>
+    <div class="landrow"><span class="k">Value drivers</span><span class="v" style="font-weight:600;font-size:11.5px">${lv.reasons.length?lv.reasons.join(", "):"base city rate"}</span></div>
+    <div class="landrow"><span class="k">As of</span><span class="v">${new Date().toLocaleDateString("en-IN",{day:"numeric",month:"short",year:"numeric"})}</span></div>
+    <div class="notice" style="margin-top:10px"><b>How reliable is this?</b> This is an <b>indicative model</b>, not a valuation. It starts from an approximate city base rate and adjusts for the real transit, schools, commercial activity, road access and environmental context detected here — but with no live transaction feed the band is wide. For an accurate figure, check the state circle/guidance rate and recent local sales.<br><br><b>Ownership &amp; survey number:</b> not available by coordinate. India's land records (survey/khata numbers, owner names) live in fragmented state systems with no open API, so Green Vision shows nothing here rather than fabricate an owner.</div>
+  </div>`;
+
+  // suggestions
+  const sug=suggestions(s);
+  h+=`<div class="section"><h3>AI Greening Suggestions</h3>`;
+  sug.forEach(x=>{const pc=x.pri==="High"?"#ef4444":x.pri==="Medium"?"#f5a623":"#12b981";
+    h+=`<div class="sug"><div class="top"><div class="ttl">${x.t}</div><span class="pri" style="background:${pc}22;color:${pc}">${x.pri}</span></div>
+      <div style="font-size:11.5px;color:var(--ink-soft);font-weight:600;margin-top:5px;line-height:1.45">${x.why}</div>
+      <div class="stats"><div><span>AQI</span> <b>${x.aqi}</b></div><div><span>Temp</span> <b>${x.temp}</b></div><div><span>Cost</span> <b>${x.cost}</b></div><div><span>CO₂</span> <b>${x.co2}</b></div><div><span>Time</span> <b>${x.time}</b></div></div></div>`;});
+  h+=`</div>`;
+
+  // planting plan for the chosen build goal (curated species + impact)
+  const g=GOALS[state.goal]||GOALS.residential;
+  const cover=s.vegPct, recAqi=s.aqi;
+  const species=pickSpecies(recAqi), need=needLevel(cover,recAqi);
+  const trees=Math.max(30,Math.round((60-Math.min(cover,60))*(g.big?4:1.6)));
+  const sideKm=d.veg?d.veg.sideKm:1.2, imp=projectImpact(species,trees,sideKm);
+  h+=`<div class="section"><h3>Planting Plan · ${g.label}</h3>`;
+  h+=`<div style="display:flex;align-items:center;gap:10px;margin-bottom:11px"><span class="needpill" style="background:${need.c};color:${need.tx}">${need.t}</span><span style="font-weight:700;font-size:12.5px;line-height:1.35">${need.msg}</span></div>`;
+  h+=`<div id="specSrc" style="font-size:10.5px;font-weight:800;letter-spacing:.06em;text-transform:uppercase;color:var(--ink-soft);margin-bottom:7px">Species · curated set</div>`;
+  if(species.length){
+    h+=`<div id="specList">`;
+    species.forEach(p=>{h+=`<div class="spec"><h4><span>${p.n}</span>${p.toxic?'<span class="chip tox">toxic</span>':''}</h4><div class="bot">${p.bot}</div><div class="chips"><span class="chip">${p.type}</span><span class="chip">pollution ${p.pol}/5</span>${p.dr?'<span class="chip">drought-hardy</span>':''}<span class="chip">~${p.canopy} m² canopy</span><span class="chip">~${p.life} yr</span></div><div class="why">${p.note}</div></div>`;});
+    h+=`</div>`;
+    h+=`<div class="mgrid" style="margin-top:8px">${metric("Suggested planting",fmt(trees),"trees &amp; shrubs")}${metric("Canopy at maturity","+"+imp.upliftPct+"%","new shaded cover",imp.upliftPct)}${metric("CO₂ / year",round(imp.co2yr,1)+" t","at maturity")}${metric("CO₂ by year 30",round(imp.cum30)+" t","cumulative")}</div>`;
+    h+=`<p style="font-size:11px;color:var(--ink-soft);font-weight:600;margin-top:8px;line-height:1.5">Species matched to your <b>${g.label.toLowerCase()}</b> goal and local air quality, from a curated India-climate set. Plant through the monsoon and guarantee watering for the first two summers. Confirm with a horticulturist before planting.</p>`;
+  } else { h+=`<p style="color:var(--ink-soft);font-weight:600;font-size:12.5px">No curated species match this goal here — try a different build type from the menu.</p>`; }
+  h+=`</div>`;
+
+  // actions
+  h+=`<div class="section" style="display:flex;gap:8px"><button id="dlPdf" class="iconbtn glass" style="width:auto;flex:1;gap:8px;font-weight:700;font-size:13px"><svg viewBox="0 0 24 24" width="16" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 3v12M7 10l5 5 5-5M5 21h14"/></svg>Export PDF</button>
+    <button id="savePlace" class="iconbtn glass" style="width:auto;flex:1;gap:8px;font-weight:700;font-size:13px"><svg viewBox="0 0 24 24" width="16" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 17.3l-6.2 3.7 1.6-7L2 9.2l7.2-.6L12 2l2.8 6.6 7.2.6-5.4 4.8 1.6 7z"/></svg>Save</button></div>
+    <p style="font-size:11px;color:var(--ink-soft);font-weight:600;line-height:1.5;margin-top:6px">Measured data: AQI, weather &amp; solar (Open-Meteo); trees, parks, buildings &amp; roads (OpenStreetMap); canopy (Esri imagery). Scores are transparent models — verify on the ground before decisions.</p>`;
+
+  $("#pBody").innerHTML=h;
+  $("#dlPdf").onclick=()=>window.print();
+  $("#savePlace").onclick=()=>saveFav(lat,lon,place);
+  // hand off to the trained GreenGrid engine (local server) for the real
+  // species pick + justification; fails safe to the built-in set if it's down
+  upgradeFromEngine(s,place,lat,lon);
+  // stash for compare
+  return {s,place,lat,lon,lv};
+}
+function aqiWord(a){if(a<=50)return"Good";if(a<=100)return"Moderate";if(a<=150)return"Unhealthy (sensitive)";if(a<=200)return"Unhealthy";if(a<=300)return"Very unhealthy";return"Hazardous";}
+
+/* ============================================================
+   CLICK ROUTING (analyse / measure / compare)
+   ============================================================ */
+let mode="analyse"; // analyse | measure
+let measurePts=[], measureLayer=null;
+let compareOn=false, cmpA=null, cmpB=null;
+function onMapClick(e){
+  const {lat,lng}=e.latlng;
+  if(mode==="measure"){addMeasure(e.latlng);return;}
+  if(compareOn){ handleCompare(lat,lng);return; }
+  analyse(lat,lng);
+}
+async function handleCompare(lat,lon){
+  const slot = !cmpA?"A":"B";
+  const r=await analyse(lat,lon);
+  const cell={lat,lon,place:r.place,s:r.s};
+  if(slot==="A"){cmpA=cell;fillSlot("cmpA",cell);}
+  else{cmpB=cell;fillSlot("cmpB",cell);}
+  if(cmpA&&cmpB)renderCompare();
+}
+function fillSlot(id,c){const el=$("#"+id);el.classList.add("filled");
+  el.innerHTML=`<div style="font-family:Sora;font-weight:700">${c.place}</div><div style="font-size:11px;color:var(--ink-soft)">Green ${c.s.green} · AQI ${c.s.aqi??"—"} · Heat ${c.s.heatIsland}</div>`;}
+function renderCompare(){
+  const rows=[["Green score","green",1],["Air quality","aqi",0],["Heat-island","heatIsland",0],["Walkability","walk",1],["Living","living",1]];
+  let h='<div style="margin-top:6px;font-size:11.5px">';
+  rows.forEach(([lab,k,hi])=>{const a=cmpA.s[k]??0,b=cmpB.s[k]??0;const aw=hi?a>=b:a<=b;
+    h+=`<div style="display:flex;justify-content:space-between;padding:4px 0"><b style="color:${aw?'#12b981':'var(--ink)'}">${a}</b><span style="color:var(--ink-soft)">${lab}</span><b style="color:${!aw?'#12b981':'var(--ink)'}">${b}</b></div>`;});
+  const winner = cmpA.s.living>=cmpB.s.living?cmpA.place:cmpB.place;
+  h+=`</div><div style="margin-top:8px;font-weight:700;font-size:12px;background:var(--bg2);border-radius:10px;padding:8px 10px">🏆 Better to live: ${winner}</div>
+    <button id="cmpReset" class="iconbtn glass" style="width:100%;margin-top:8px;font-weight:700;font-size:12px">Reset compare</button>`;
+  $("#cmpResult").innerHTML=h;
+  $("#cmpReset").onclick=resetCompare;
+}
+function resetCompare(){cmpA=cmpB=null;$("#cmpResult").innerHTML="";["cmpA","cmpB"].forEach((id,i)=>{const el=$("#"+id);el.classList.remove("filled");el.textContent="Slot "+(i?"B — click again":"A — click the map");});}
+
+/* ---------- measure (distance + area) — #7 ---------- */
+function addMeasure(ll){
+  measurePts.push(ll);
+  if(!measureLayer)measureLayer=L.layerGroup().addTo(map);
+  L.circleMarker(ll,{radius:4,color:"#12b981",fillColor:"#fff",fillOpacity:1,weight:2}).addTo(measureLayer);
+  if(measurePts.length>1){L.polyline(measurePts,{color:"#12b981",weight:3,dashArray:"6 5"}).addTo(measureLayer);}
+  let dist=0;for(let i=1;i<measurePts.length;i++)dist+=haversine(measurePts[i-1].lat,measurePts[i-1].lng,measurePts[i].lat,measurePts[i].lng);
+  let area=0;
+  if(measurePts.length>=3){const R=6378137,rad=Math.PI/180;let a=0;for(let i=0;i<measurePts.length;i++){const p1=measurePts[i],p2=measurePts[(i+1)%measurePts.length];a+=(p2.lng-p1.lng)*rad*(2+Math.sin(p1.lat*rad)+Math.sin(p2.lat*rad));}area=Math.abs(a*R*R/2);L.polygon(measurePts,{color:"#12b981",weight:2,fillOpacity:.12}).addTo(measureLayer);}
+  const m=$("#measure");m.classList.add("show");
+  m.innerHTML=`Distance: ${dist<1?round(dist*1000)+" m":round(dist,2)+" km"}${area?` · Area: ${area>1e6?round(area/1e6,2)+" km²":round(area)+" m² ("+round(area/10000,2)+" ha)"}`:""} <span style="color:var(--ink-soft);font-weight:600">· click to add, ⎋ to finish</span>`;
+}
+function endMeasure(){mode="analyse";$("#measBtn").classList.remove("on");if(measureLayer){map.removeLayer(measureLayer);measureLayer=null;}measurePts=[];$("#measure").classList.remove("show");}
+
+/* ============================================================
+   STREET VIEW (fix #4) + TRAFFIC (fix #5)
+   ============================================================ */
+function openStreet(){
+  const p=lastPoint||map.getCenter&&[map.getCenter().lat,map.getCenter().lng]||CFG.START;
+  const [lat,lon]=Array.isArray(p)?p:[p.lat,p.lng];
+  $("#modalTitle").textContent="Street View";
+  const body=$("#modalBody");
+  body.innerHTML=`<div class="state" id="svState"><div class="spinner"></div><div>Loading street imagery…</div></div>`;
+  const iframe=document.createElement("iframe");
+  iframe.allow="fullscreen";iframe.loading="lazy";iframe.referrerPolicy="no-referrer-when-downgrade";
+  iframe.src="https://www.google.com/maps?q=&layer=c&cbll="+lat+","+lon+"&cbp=11,0,0,0,0&z=17&output=svembed";
+  let loaded=false;
+  iframe.onload=()=>{loaded=true;const st=$("#svState");if(st)st.style.display="none";};
+  body.appendChild(iframe);
+  // fallback / no-imagery handling
+  setTimeout(()=>{ if(!loaded){ const st=$("#svState"); if(st){st.innerHTML=
+    `<svg viewBox="0 0 24 24" width="40" fill="none" stroke="#7fd3b8" stroke-width="1.6"><circle cx="12" cy="10" r="3"/><path d="M12 21s-7-6.5-7-11a7 7 0 0114 0c0 4.5-7 11-7 11z"/></svg>
+     <div style="font-weight:700">No Street View available for this location.</div>
+     <a href="https://www.mapillary.com/app/?lat=${lat}&lng=${lon}&z=17" target="_blank" style="color:#7fd3b8;font-weight:700;text-decoration:underline">Try Mapillary street imagery →</a>`; }
+  }},4500);
+  const note=document.createElement("div");note.className="note";note.textContent="360° pan & zoom inside the frame. If blank, no imagery exists at this exact spot — try a nearby road or Mapillary.";body.appendChild(note);
+  showModal();
+}
+function openTraffic(){
+  const p=lastPoint||[map.getCenter().lat,map.getCenter().lng];
+  const [lat,lon]=Array.isArray(p)?p:[p.lat,p.lng];
+  $("#modalTitle").textContent="Live Traffic";
+  const body=$("#modalBody");
+  body.innerHTML=`<div class="state" id="tfState"><div class="spinner"></div><div>Loading live traffic…</div></div>`;
+  const iframe=document.createElement("iframe");
+  iframe.allow="fullscreen";iframe.loading="lazy";
+  iframe.src="https://www.google.com/maps?q="+lat+","+lon+"&z=14&layer=t&output=embed";
+  iframe.onload=()=>{const st=$("#tfState");if(st)st.style.display="none";};
+  body.appendChild(iframe);
+  const note=document.createElement("div");note.className="note";
+  note.innerHTML="Live congestion: <b style='color:#12b981'>green</b> free-flow · <b style='color:#f5a623'>orange</b> moderate · <b style='color:#ef4444'>red</b> heavy · <b style='color:#b91c1c'>dark red</b> gridlock. Historical “typical traffic by day/time” needs a paid routing API and isn't shown rather than faked.";
+  body.appendChild(note);
+  showModal();
+}
+function showModal(){$("#modal").classList.add("show");}
+function closeModal(){$("#modal").classList.remove("show");$("#modalBody").innerHTML="";}
+
+/* ============================================================
+   TIME MACHINE (real NASA GIBS dated imagery) — #9 (imagery)
+   ============================================================ */
+let gibsDates=[];
+function initTimeMachine(){
+  if(gibsDates.length===0){ // build monthly steps for the last ~3 years
+    const now=new Date(); for(let i=0;i<36;i++){const dt=new Date(now.getFullYear(),now.getMonth()-i,1);gibsDates.unshift(dt.toISOString().slice(0,10));}
+    const r=$("#timeRange");r.max=gibsDates.length-1;r.value=gibsDates.length-1;
+    r.oninput=()=>applyGibs(+r.value);
+  }
+  applyGibs(gibsDates.length-1);
+}
+function applyGibs(idx){
+  const date=gibsDates[idx];$("#timeLabel").textContent="Imagery month: "+new Date(date).toLocaleDateString("en-IN",{month:"long",year:"numeric"});
+  if(gibsLayer)map.removeLayer(gibsLayer);
+  gibsLayer=L.tileLayer("https://gibs.earthdata.nasa.gov/wmts/epsg3857/best/MODIS_Terra_CorrectedReflectance_TrueColor/default/"+date+"/GoogleMapsCompatible_Level9/{z}/{y}/{x}.jpg",
+    {maxNativeZoom:9,maxZoom:19,opacity:1,attribution:"NASA GIBS / MODIS"});
+  [esriLayer,googLayer,osmLayer].forEach(l=>{if(l&&map.hasLayer(l))map.removeLayer(l);});
+  gibsLayer.addTo(map);
+}
+function exitTime(){ $("#timebar").classList.remove("show"); if(gibsLayer){map.removeLayer(gibsLayer);gibsLayer=null;} ensureBase(esriLayer); setView("satellite"); }
+
+/* ============================================================
+   SEARCH + AUTOCOMPLETE — #7
+   ============================================================ */
+let acTimer=null;
+async function autocomplete(q){
+  if(googleReady){return;} // Google Places attaches its own dropdown to the input
+  if(!q||q.length<3){$("#acList").classList.remove("show");return;}
+  const coord=q.match(/^\s*(-?\d{1,3}(?:\.\d+)?)\s*,\s*(-?\d{1,3}(?:\.\d+)?)\s*$/);
+  if(coord){$("#acList").classList.remove("show");return;}
+  const j=await getJSON("https://nominatim.openstreetmap.org/search?format=json&limit=6&addressdetails=1&q="+encodeURIComponent(q),{headers:{"Accept":"application/json"}});
+  if(!j||!j.length){$("#acList").classList.remove("show");return;}
+  const box=$("#acList");box.innerHTML="";
+  j.forEach(x=>{const d=document.createElement("div");d.className="ac";
+    d.innerHTML=`<div class="n">${(x.display_name||"").split(",")[0]}</div><div class="m">${(x.display_name||"").split(",").slice(1,4).join(", ").trim()}</div>`;
+    d.onclick=()=>{box.classList.remove("show");$("#q").value=(x.display_name||"").split(",")[0];map.setView([+x.lat,+x.lon],16);analyse(+x.lat,+x.lon);};
+    box.appendChild(d);});
+  box.classList.add("show");
+}
+async function doSearch(){
+  const q=$("#q").value.trim();if(!q)return;
+  $("#acList").classList.remove("show");
+  const coord=q.match(/^\s*(-?\d{1,3}(?:\.\d+)?)\s*,\s*(-?\d{1,3}(?:\.\d+)?)\s*$/);
+  if(coord){const la=+coord[1],lo=+coord[2];map.setView([la,lo],16);analyse(la,lo);return;}
+  // Google Geocoding first when a key is present, else OpenStreetMap.
+  if(CFG.GOOGLE_KEY){const g=await googleGeocode(q);if(g){map.setView([g.lat,g.lon],16);analyse(g.lat,g.lon);return;}}
+  const j=await getJSON("https://nominatim.openstreetmap.org/search?format=json&limit=1&q="+encodeURIComponent(q),{headers:{"Accept":"application/json"}});
+  if(j&&j.length){map.setView([+j[0].lat,+j[0].lon],16);analyse(+j[0].lat,+j[0].lon);}else toast("No match found");
+}
+
+/* ============================================================
+   FAVORITES + SHARE — #12
+   ============================================================ */
+function favs(){try{return JSON.parse(localStorage.getItem("gv_favs")||"[]");}catch(e){return[];}}
+function saveFav(lat,lon,name){const f=favs();f.unshift({lat,lon,name,ts:Date.now()});localStorage.setItem("gv_favs",JSON.stringify(f.slice(0,30)));toast("Saved to favorites");}
+function showFavs(){
+  const f=favs();skeletonHide();
+  $("#pEyebrow").textContent="Saved";$("#pTitle").textContent="Favorites";$("#pSub").textContent=f.length+" saved location"+(f.length!==1?"s":"");
+  let h=f.length?"":'<p style="color:var(--ink-soft);font-weight:600">No favorites yet. Analyse a spot, then tap Save.</p>';
+  f.forEach((x,i)=>{h+=`<div class="sug" style="cursor:pointer" data-i="${i}"><div class="ttl">${x.name}</div><div style="font-size:11.5px;color:var(--ink-soft);font-weight:600;margin-top:3px">${round(x.lat,4)}, ${round(x.lon,4)}</div></div>`;});
+  $("#pBody").innerHTML=h;openPanel();
+  $$("#pBody .sug").forEach(el=>el.onclick=()=>{const x=f[+el.dataset.i];map.setView([x.lat,x.lon],16);analyse(x.lat,x.lon);});
+}
+function skeletonHide(){}
+function syncHash(){if(!map)return;const c=map.getCenter();location.hash=round(c.lat,5)+","+round(c.lng,5)+","+Math.round(map.getZoom());}
+function parseHash(){const m=location.hash.slice(1).split(",");if(m.length>=2&&!isNaN(+m[0]))return{lat:+m[0],lon:+m[1],z:+m[2]||16};return null;}
+function share(){const c=map.getCenter();const url=location.origin+location.pathname+"#"+round(c.lat,5)+","+round(c.lng,5)+","+Math.round(map.getZoom());
+  navigator.clipboard&&navigator.clipboard.writeText(url).then(()=>toast("Shareable link copied"),()=>toast(url));}
+
+/* ============================================================
+   THEME
+   ============================================================ */
+function setTheme(t){document.documentElement.setAttribute("data-theme",t);localStorage.setItem("gv_theme",t);
+  $("#themeIcon").innerHTML = t==="dark"
+    ? '<path d="M21 12.8A9 9 0 1111.2 3a7 7 0 009.8 9.8z"/>'
+    : '<circle cx="12" cy="12" r="4.5"/><path d="M12 2v2M12 20v2M4 12H2M22 12h-2M5 5l1.5 1.5M17.5 17.5L19 19M19 5l-1.5 1.5M6.5 17.5L5 19"/>';
+}
+
+/* ============================================================
+   GOAL PICKER + NEARBY SITE SUGGESTIONS  (near searched area, by goal)
+   ============================================================ */
+function buildGoalGrid(){
+  const gg=$("#goalGrid");if(!gg)return;gg.innerHTML="";
+  Object.entries(GOALS).forEach(([k,v])=>{const d=document.createElement("div");
+    d.className="goalopt"+(k===state.goal?" sel":"");d.textContent=v.label;d.dataset.goal=k;
+    d.onclick=()=>{state.goal=k;$$("#goalGrid .goalopt").forEach(x=>x.classList.toggle("sel",x.dataset.goal===k));};
+    gg.appendChild(d);});
+}
+async function nominatimNear(q,lat,lon,km){
+  const dLat=km/111,dLon=km/((111*Math.cos(lat*Math.PI/180))||1);
+  const url="https://nominatim.openstreetmap.org/search?format=json&addressdetails=1&limit=8&bounded=1&viewbox="+
+    (lon-dLon)+","+(lat+dLat)+","+(lon+dLon)+","+(lat-dLat)+"&q="+encodeURIComponent(q);
+  const j=await getJSON(url,{headers:{"Accept":"application/json"}});if(!j)return[];
+  return j.map(x=>({lat:+x.lat,lon:+x.lon,name:(x.display_name||"").split(",")[0],
+    meta:(x.display_name||"").split(",").slice(1,4).join(", ").trim()}));
+}
+async function geocodeMany(qs){let out=[];for(const q of qs){
+  const j=await getJSON("https://nominatim.openstreetmap.org/search?format=json&limit=3&q="+encodeURIComponent(q),{headers:{"Accept":"application/json"}});
+  if(j)out=out.concat(j.map(x=>({lat:+x.lat,lon:+x.lon,name:(x.display_name||"").split(",")[0],meta:(x.display_name||"").split(",").slice(1,4).join(", ").trim()})));}
+  return out;}
+async function suggestGoalSites(){
+  const c=map.getCenter(), g=GOALS[state.goal], terms=GOAL_SEARCH[state.goal]||["open area"];
+  const near=lastPlace||(round(c.lat,3)+", "+round(c.lng,3));
+  $("#pEyebrow").textContent="Site suggestions";$("#pTitle").textContent=g.label+" sites";$("#pSub").textContent="Near "+near+" · nearest first";
+  $("#pBody").innerHTML='<div class="skel" style="height:66px;margin-bottom:8px"></div>'.repeat(4);openPanel();
+  const radius=g.big?9:5; let list=[];
+  for(const t of terms){ list=list.concat(await nominatimNear(t,c.lat,c.lng,radius)); if(list.length>=18)break; }
+  if(list.length<3){ const city=(lastGeo&&lastGeo.city)||CFG.HOME; list=list.concat(await geocodeMany(terms.map(t=>t+" in "+city))); }
+  const seen=new Set(),uniq=[];
+  list.map(x=>{x.dist=haversine(c.lat,c.lng,x.lat,x.lon);return x;}).filter(x=>x.dist>0.05).sort((a,b)=>a.dist-b.dist)
+    .forEach(x=>{const k=x.name.toLowerCase()+"|"+x.lat.toFixed(3);if(seen.has(k))return;seen.add(k);uniq.push(x);});
+  const top=uniq.slice(0,6);
+  if(!top.length){$("#pBody").innerHTML='<p style="color:var(--ink-soft);font-weight:600">No matching sites found nearby. Move the map to your area of interest and try again.</p>';return;}
+  let h='<p style="color:var(--ink-soft);font-weight:600;font-size:12.5px;margin:0 0 10px">'+g.label+' sites near '+near+'. Tap one to run its full report.</p>';
+  top.forEach((x,i)=>{h+=`<div class="sug" style="cursor:pointer" data-i="${i}"><div class="top"><div class="ttl">${x.name}</div><span class="pri" style="background:rgba(18,185,129,.14);color:#0e9f6e">${x.dist<1?round(x.dist*1000)+" m":round(x.dist,1)+" km"}</span></div>${x.meta?`<div style="font-size:11.5px;color:var(--ink-soft);font-weight:600;margin-top:3px">${x.meta}</div>`:""}</div>`;});
+  $("#pBody").innerHTML=h;
+  $$("#pBody .sug").forEach(el=>el.onclick=()=>{const x=top[+el.dataset.i];map.setView([x.lat,x.lon],16);analyse(x.lat,x.lon);});
+}
+
+/* ============================================================
+   WIRING
+   ============================================================ */
+function boot(){
+  setTheme(localStorage.getItem("gv_theme")||"light");
+  initMap();
+  buildGoalGrid();
+  loadGoogleSearch();
+  engineProbe().then(on=>{ if(on) toast("GreenGrid engine connected"); }); // trained engine health check
+  $("#suggestBtn").onclick=suggestGoalSites;
+  $("#enterBtn").onclick=()=>{$("#intro").style.display="none";setTimeout(()=>map.invalidateSize(),60);toast("Goal: "+GOALS[state.goal].label+" — click the map to analyse");};
+  $$(".viewbtn").forEach(b=>b.onclick=()=>setView(b.dataset.view));
+  $("#zoomIn").onclick=()=>map.zoomIn();$("#zoomOut").onclick=()=>map.zoomOut();
+  $("#locBtn").onclick=()=>navigator.geolocation&&navigator.geolocation.getCurrentPosition(
+    p=>{map.setView([p.coords.latitude,p.coords.longitude],16);analyse(p.coords.latitude,p.coords.longitude);},
+    ()=>toast("Location unavailable"));
+  $("#fsBtn").onclick=()=>{const el=document.documentElement;if(!document.fullscreenElement)el.requestFullscreen&&el.requestFullscreen();else document.exitFullscreen();};
+  $("#compass").onclick=()=>map.setView(map.getCenter(),map.getZoom());
+  $("#measBtn").onclick=()=>{ if(mode==="measure"){endMeasure();} else {mode="measure";measurePts=[];$("#measBtn").classList.add("on");toast("Measure mode: click points on the map");} };
+  $("#cmpBtn").onclick=()=>{compareOn=!compareOn;$("#cmpBtn").classList.toggle("on",compareOn);$("#compareTray").classList.toggle("show",compareOn);if(compareOn){resetCompare();toast("Compare: click two locations");}};
+  $("#favBtn").onclick=showFavs;
+  $("#shareBtn").onclick=share;
+  $("#themeBtn").onclick=()=>setTheme(document.documentElement.getAttribute("data-theme")==="dark"?"light":"dark");
+  $("#pClose").onclick=()=>$("#panel").classList.remove("open");
+  $("#modalClose").onclick=closeModal;
+  $("#timeClose").onclick=exitTime;
+  $("#q").addEventListener("input",e=>{clearTimeout(acTimer);acTimer=setTimeout(()=>autocomplete(e.target.value.trim()),300);});
+  $("#q").addEventListener("keydown",e=>{if(e.key==="Enter")doSearch();});
+  document.addEventListener("keydown",e=>{
+    if(e.target.tagName==="INPUT")return;
+    if(e.key==="/"){e.preventDefault();$("#q").focus();}
+    else if(e.key==="Escape"){if(mode==="measure")endMeasure();closeModal();$("#panel").classList.remove("open");$("#acList").classList.remove("show");}
+    else if(e.key.toLowerCase()==="g")setView("green");
+    else if(e.key.toLowerCase()==="v")setView("satellite");
+    else if(e.key.toLowerCase()==="d")setTheme(document.documentElement.getAttribute("data-theme")==="dark"?"light":"dark");
+    else if(e.key.toLowerCase()==="f")$("#fsBtn").click();
+  });
+  toast("Click anywhere on the map to analyse");
+}
+document.addEventListener("DOMContentLoaded",boot);
+</script>
+</body>
+</html>

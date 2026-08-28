@@ -1,0 +1,10 @@
+{
+  "_note": "Language registry for Green Vision. `dir` drives the document direction; `native` is what the picker shows, because a language selector that lists languages in a language you cannot read is not a language selector.",
+  "languages": [
+    { "code": "en", "name": "English",   "native": "English",   "dir": "ltr" },
+    { "code": "hi", "name": "Hindi",     "native": "हिन्दी",      "dir": "ltr" },
+    { "code": "gu", "name": "Gujarati",  "native": "ગુજરાતી",     "dir": "ltr" },
+    { "code": "mr", "name": "Marathi",   "native": "मराठी",      "dir": "ltr" },
+    { "code": "bn", "name": "Bengali",   "native": "বাংলা",      "dir": "ltr" }
+  ]
+}

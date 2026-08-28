@@ -1,0 +1,1505 @@
+[
+{
+"zone": "z000",
+"rank": 1,
+"plantable_space": 0.4429,
+"ndvi_latest": 0.1103,
+"score": 0.6509,
+"lat": 23.021449,
+"lon": 72.580718
+},
+{
+"zone": "z001",
+"rank": 2,
+"plantable_space": 0.4743,
+"ndvi_latest": 0.0732,
+"score": 0.5074,
+"lat": 23.02075,
+"lon": 72.578673
+},
+{
+"zone": "z002",
+"rank": 3,
+"plantable_space": 0.2524,
+"ndvi_latest": 0.0863,
+"score": 0.4245,
+"lat": 23.036537,
+"lon": 72.572476
+},
+{
+"zone": "z003",
+"rank": 4,
+"plantable_space": 0.3674,
+"ndvi_latest": 0.301,
+"score": 0.9477,
+"lat": 23.031542,
+"lon": 72.577934
+},
+{
+"zone": "z004",
+"rank": 5,
+"plantable_space": 0.9322,
+"ndvi_latest": 0.0686,
+"score": 0.8585,
+"lat": 23.025792,
+"lon": 72.572885
+},
+{
+"zone": "z005",
+"rank": 6,
+"plantable_space": 0.2883,
+"ndvi_latest": 0.1734,
+"score": 0.8161,
+"lat": 23.023615,
+"lon": 72.581632
+},
+{
+"zone": "z006",
+"rank": 7,
+"plantable_space": 0.6792,
+"ndvi_latest": 0.199,
+"score": 0.5477,
+"lat": 23.021256,
+"lon": 72.571192
+},
+{
+"zone": "z007",
+"rank": 8,
+"plantable_space": 0.3545,
+"ndvi_latest": 0.3222,
+"score": 0.4276,
+"lat": 23.026283,
+"lon": 72.581711
+},
+{
+"zone": "z008",
+"rank": 9,
+"plantable_space": 0.5399,
+"ndvi_latest": 0.1699,
+"score": 0.7944,
+"lat": 23.03398,
+"lon": 72.574882
+},
+{
+"zone": "z009",
+"rank": 10,
+"plantable_space": 0.6308,
+"ndvi_latest": 0.2601,
+"score": 0.8751,
+"lat": 23.034589,
+"lon": 72.575759
+},
+{
+"zone": "z010",
+"rank": 11,
+"plantable_space": 0.9351,
+"ndvi_latest": 0.0972,
+"score": 0.4181,
+"lat": 23.035143,
+"lon": 72.57304
+},
+{
+"zone": "z011",
+"rank": 12,
+"plantable_space": 0.5667,
+"ndvi_latest": 0.0657,
+"score": 0.6682,
+"lat": 23.035291,
+"lon": 72.581461
+},
+{
+"zone": "z012",
+"rank": 13,
+"plantable_space": 0.8566,
+"ndvi_latest": 0.1755,
+"score": 0.6953,
+"lat": 23.077185,
+"lon": 72.619948
+},
+{
+"zone": "z013",
+"rank": 14,
+"plantable_space": 0.5422,
+"ndvi_latest": 0.386,
+"score": 0.9447,
+"lat": 23.017049,
+"lon": 72.662076
+},
+{
+"zone": "z014",
+"rank": 15,
+"plantable_space": 0.2455,
+"ndvi_latest": 0.3306,
+"score": 0.6471,
+"lat": 23.276548,
+"lon": 72.740962
+},
+{
+"zone": "z015",
+"rank": 16,
+"plantable_space": 0.4134,
+"ndvi_latest": 0.2043,
+"score": 0.6687,
+"lat": 22.791281,
+"lon": 72.560848
+},
+{
+"zone": "z016",
+"rank": 17,
+"plantable_space": 0.326,
+"ndvi_latest": 0.0968,
+"score": 0.059,
+"lat": 23.164116,
+"lon": 72.39467
+},
+{
+"zone": "z017",
+"rank": 18,
+"plantable_space": 0.3857,
+"ndvi_latest": 0.2064,
+"score": 0.8714,
+"lat": 22.820291,
+"lon": 72.554594
+},
+{
+"zone": "z018",
+"rank": 19,
+"plantable_space": 0.6121,
+"ndvi_latest": 0.4034,
+"score": 0.8193,
+"lat": 23.211992,
+"lon": 72.469211
+},
+{
+"zone": "z019",
+"rank": 20,
+"plantable_space": 0.5115,
+"ndvi_latest": 0.1935,
+"score": 0.8842,
+"lat": 23.258866,
+"lon": 72.40546
+},
+{
+"zone": "z020",
+"rank": 21,
+"plantable_space": 0.3322,
+"ndvi_latest": 0.1428,
+"score": 0.2333,
+"lat": 23.022481,
+"lon": 72.624562
+},
+{
+"zone": "z021",
+"rank": 22,
+"plantable_space": 0.3971,
+"ndvi_latest": 0.0516,
+"score": 0.4189,
+"lat": 22.964627,
+"lon": 72.613171
+},
+{
+"zone": "z022",
+"rank": 23,
+"plantable_space": 0.9148,
+"ndvi_latest": 0.3262,
+"score": 0.5155,
+"lat": 23.088796,
+"lon": 72.6681
+},
+{
+"zone": "z023",
+"rank": 24,
+"plantable_space": 0.2405,
+"ndvi_latest": 0.4098,
+"score": 0.78,
+"lat": 23.217257,
+"lon": 72.728937
+},
+{
+"zone": "z024",
+"rank": 25,
+"plantable_space": 0.4943,
+"ndvi_latest": 0.2096,
+"score": 0.1035,
+"lat": 23.097145,
+"lon": 72.361124
+},
+{
+"zone": "z025",
+"rank": 26,
+"plantable_space": 0.2505,
+"ndvi_latest": 0.1335,
+"score": 0.1623,
+"lat": 22.950027,
+"lon": 72.356288
+},
+{
+"zone": "z026",
+"rank": 27,
+"plantable_space": 0.2002,
+"ndvi_latest": 0.1105,
+"score": 0.1015,
+"lat": 22.961805,
+"lon": 72.34275
+},
+{
+"zone": "z027",
+"rank": 28,
+"plantable_space": 0.8557,
+"ndvi_latest": 0.2956,
+"score": 0.1486,
+"lat": 22.906129,
+"lon": 72.503695
+},
+{
+"zone": "z028",
+"rank": 29,
+"plantable_space": 0.4731,
+"ndvi_latest": 0.0991,
+"score": 0.8489,
+"lat": 23.276551,
+"lon": 72.562995
+},
+{
+"zone": "z029",
+"rank": 30,
+"plantable_space": 0.5629,
+"ndvi_latest": 0.0844,
+"score": 0.1022,
+"lat": 22.951318,
+"lon": 72.462378
+},
+{
+"zone": "z030",
+"rank": 31,
+"plantable_space": 0.8216,
+"ndvi_latest": 0.1146,
+"score": 0.0231,
+"lat": 23.255493,
+"lon": 72.594129
+},
+{
+"zone": "z031",
+"rank": 32,
+"plantable_space": 0.31,
+"ndvi_latest": 0.2673,
+"score": 0.027,
+"lat": 23.044055,
+"lon": 72.819251
+},
+{
+"zone": "z032",
+"rank": 33,
+"plantable_space": 0.8475,
+"ndvi_latest": 0.3285,
+"score": 0.2611,
+"lat": 22.96335,
+"lon": 72.413521
+},
+{
+"zone": "z033",
+"rank": 34,
+"plantable_space": 0.779,
+"ndvi_latest": 0.263,
+"score": 0.7791,
+"lat": 22.944832,
+"lon": 72.441521
+},
+{
+"zone": "z034",
+"rank": 35,
+"plantable_space": 0.8086,
+"ndvi_latest": 0.444,
+"score": 0.8526,
+"lat": 23.183039,
+"lon": 72.739166
+},
+{
+"zone": "z035",
+"rank": 36,
+"plantable_space": 0.7549,
+"ndvi_latest": 0.1407,
+"score": 0.5176,
+"lat": 22.957781,
+"lon": 72.34449
+},
+{
+"zone": "z036",
+"rank": 37,
+"plantable_space": 0.221,
+"ndvi_latest": 0.1618,
+"score": 0.2592,
+"lat": 23.126261,
+"lon": 72.808258
+},
+{
+"zone": "z037",
+"rank": 38,
+"plantable_space": 0.5354,
+"ndvi_latest": 0.4248,
+"score": 0.988,
+"lat": 23.2575,
+"lon": 72.512318
+},
+{
+"zone": "z038",
+"rank": 39,
+"plantable_space": 0.3653,
+"ndvi_latest": 0.1407,
+"score": 0.1967,
+"lat": 22.882187,
+"lon": 72.642033
+},
+{
+"zone": "z039",
+"rank": 40,
+"plantable_space": 0.8752,
+"ndvi_latest": 0.3862,
+"score": 0.4795,
+"lat": 23.106489,
+"lon": 72.729822
+},
+{
+"zone": "z040",
+"rank": 41,
+"plantable_space": 0.2636,
+"ndvi_latest": 0.3142,
+"score": 0.9098,
+"lat": 23.171151,
+"lon": 72.70507
+},
+{
+"zone": "z041",
+"rank": 42,
+"plantable_space": 0.5585,
+"ndvi_latest": 0.1214,
+"score": 0.7891,
+"lat": 22.946259,
+"lon": 72.730412
+},
+{
+"zone": "z042",
+"rank": 43,
+"plantable_space": 0.9287,
+"ndvi_latest": 0.2083,
+"score": 0.4014,
+"lat": 23.253399,
+"lon": 72.692399
+},
+{
+"zone": "z043",
+"rank": 44,
+"plantable_space": 0.3275,
+"ndvi_latest": 0.1008,
+"score": 0.1512,
+"lat": 23.232426,
+"lon": 72.733251
+},
+{
+"zone": "z044",
+"rank": 45,
+"plantable_space": 0.3096,
+"ndvi_latest": 0.3806,
+"score": 0.9803,
+"lat": 23.108634,
+"lon": 72.505204
+},
+{
+"zone": "z045",
+"rank": 46,
+"plantable_space": 0.6115,
+"ndvi_latest": 0.1024,
+"score": 0.0142,
+"lat": 23.265445,
+"lon": 72.654837
+},
+{
+"zone": "z046",
+"rank": 47,
+"plantable_space": 0.5949,
+"ndvi_latest": 0.4234,
+"score": 0.4338,
+"lat": 23.215871,
+"lon": 72.743078
+},
+{
+"zone": "z047",
+"rank": 48,
+"plantable_space": 0.3583,
+"ndvi_latest": 0.1507,
+"score": 0.293,
+"lat": 22.90027,
+"lon": 72.623219
+},
+{
+"zone": "z048",
+"rank": 49,
+"plantable_space": 0.3945,
+"ndvi_latest": 0.2176,
+"score": 0.1311,
+"lat": 23.235009,
+"lon": 72.506892
+},
+{
+"zone": "z049",
+"rank": 50,
+"plantable_space": 0.5436,
+"ndvi_latest": 0.2833,
+"score": 0.9043,
+"lat": 22.990314,
+"lon": 72.788861
+},
+{
+"zone": "z050",
+"rank": 51,
+"plantable_space": 0.5762,
+"ndvi_latest": 0.2627,
+"score": 0.5235,
+"lat": 22.789352,
+"lon": 72.550062
+},
+{
+"zone": "z051",
+"rank": 52,
+"plantable_space": 0.3373,
+"ndvi_latest": 0.0516,
+"score": 0.7992,
+"lat": 22.866173,
+"lon": 72.566746
+},
+{
+"zone": "z052",
+"rank": 53,
+"plantable_space": 0.7439,
+"ndvi_latest": 0.2726,
+"score": 0.326,
+"lat": 23.039174,
+"lon": 72.607721
+},
+{
+"zone": "z053",
+"rank": 54,
+"plantable_space": 0.7882,
+"ndvi_latest": 0.0924,
+"score": 0.5603,
+"lat": 22.904247,
+"lon": 72.468459
+},
+{
+"zone": "z054",
+"rank": 55,
+"plantable_space": 0.7792,
+"ndvi_latest": 0.2531,
+"score": 0.5617,
+"lat": 23.159997,
+"lon": 72.786244
+},
+{
+"zone": "z055",
+"rank": 56,
+"plantable_space": 0.5324,
+"ndvi_latest": 0.295,
+"score": 0.5056,
+"lat": 23.036081,
+"lon": 72.676366
+},
+{
+"zone": "z056",
+"rank": 57,
+"plantable_space": 0.5393,
+"ndvi_latest": 0.2633,
+"score": 0.478,
+"lat": 23.250751,
+"lon": 72.679609
+},
+{
+"zone": "z057",
+"rank": 58,
+"plantable_space": 0.8574,
+"ndvi_latest": 0.4269,
+"score": 0.2596,
+"lat": 23.059757,
+"lon": 72.801634
+},
+{
+"zone": "z058",
+"rank": 59,
+"plantable_space": 0.83,
+"ndvi_latest": 0.1049,
+"score": 0.1216,
+"lat": 23.001059,
+"lon": 72.366273
+},
+{
+"zone": "z059",
+"rank": 60,
+"plantable_space": 0.3805,
+"ndvi_latest": 0.0792,
+"score": 0.6695,
+"lat": 23.171968,
+"lon": 72.778513
+},
+{
+"zone": "z060",
+"rank": 61,
+"plantable_space": 0.3158,
+"ndvi_latest": 0.3364,
+"score": 0.6603,
+"lat": 22.851489,
+"lon": 72.771416
+},
+{
+"zone": "z061",
+"rank": 62,
+"plantable_space": 0.9257,
+"ndvi_latest": 0.1378,
+"score": 0.9525,
+"lat": 22.979128,
+"lon": 72.57363
+},
+{
+"zone": "z062",
+"rank": 63,
+"plantable_space": 0.9424,
+"ndvi_latest": 0.383,
+"score": 0.1615,
+"lat": 22.995761,
+"lon": 72.587803
+},
+{
+"zone": "z063",
+"rank": 64,
+"plantable_space": 0.4543,
+"ndvi_latest": 0.1283,
+"score": 0.3185,
+"lat": 23.141075,
+"lon": 72.339741
+},
+{
+"zone": "z064",
+"rank": 65,
+"plantable_space": 0.6155,
+"ndvi_latest": 0.2262,
+"score": 0.0181,
+"lat": 22.945749,
+"lon": 72.641964
+},
+{
+"zone": "z065",
+"rank": 66,
+"plantable_space": 0.5842,
+"ndvi_latest": 0.0757,
+"score": 0.9851,
+"lat": 23.174182,
+"lon": 72.815848
+},
+{
+"zone": "z066",
+"rank": 67,
+"plantable_space": 0.2786,
+"ndvi_latest": 0.1562,
+"score": 0.0396,
+"lat": 23.169499,
+"lon": 72.465223
+},
+{
+"zone": "z067",
+"rank": 68,
+"plantable_space": 0.2972,
+"ndvi_latest": 0.2189,
+"score": 0.9114,
+"lat": 23.189489,
+"lon": 72.459305
+},
+{
+"zone": "z068",
+"rank": 69,
+"plantable_space": 0.312,
+"ndvi_latest": 0.4177,
+"score": 0.5706,
+"lat": 23.130209,
+"lon": 72.374731
+},
+{
+"zone": "z069",
+"rank": 70,
+"plantable_space": 0.2431,
+"ndvi_latest": 0.3253,
+"score": 0.4253,
+"lat": 22.816207,
+"lon": 72.799175
+},
+{
+"zone": "z070",
+"rank": 71,
+"plantable_space": 0.6758,
+"ndvi_latest": 0.3707,
+"score": 0.0837,
+"lat": 23.208114,
+"lon": 72.363311
+},
+{
+"zone": "z071",
+"rank": 72,
+"plantable_space": 0.8471,
+"ndvi_latest": 0.2315,
+"score": 0.3392,
+"lat": 23.056532,
+"lon": 72.793335
+},
+{
+"zone": "z072",
+"rank": 73,
+"plantable_space": 0.4009,
+"ndvi_latest": 0.1017,
+"score": 0.5269,
+"lat": 22.899218,
+"lon": 72.384726
+},
+{
+"zone": "z073",
+"rank": 74,
+"plantable_space": 0.3211,
+"ndvi_latest": 0.0702,
+"score": 0.2018,
+"lat": 22.935996,
+"lon": 72.482503
+},
+{
+"zone": "z074",
+"rank": 75,
+"plantable_space": 0.7696,
+"ndvi_latest": 0.166,
+"score": 0.5001,
+"lat": 22.86895,
+"lon": 72.503501
+},
+{
+"zone": "z075",
+"rank": 76,
+"plantable_space": 0.2136,
+"ndvi_latest": 0.1502,
+"score": 0.0153,
+"lat": 23.14654,
+"lon": 72.605525
+},
+{
+"zone": "z076",
+"rank": 77,
+"plantable_space": 0.3421,
+"ndvi_latest": 0.2399,
+"score": 0.9346,
+"lat": 22.833141,
+"lon": 72.73946
+},
+{
+"zone": "z077",
+"rank": 78,
+"plantable_space": 0.5241,
+"ndvi_latest": 0.248,
+"score": 0.8346,
+"lat": 22.976543,
+"lon": 72.583343
+},
+{
+"zone": "z078",
+"rank": 79,
+"plantable_space": 0.7158,
+"ndvi_latest": 0.443,
+"score": 0.3427,
+"lat": 23.196143,
+"lon": 72.683363
+},
+{
+"zone": "z079",
+"rank": 80,
+"plantable_space": 0.677,
+"ndvi_latest": 0.2119,
+"score": 0.3476,
+"lat": 22.807194,
+"lon": 72.394909
+},
+{
+"zone": "z080",
+"rank": 81,
+"plantable_space": 0.253,
+"ndvi_latest": 0.3464,
+"score": 0.2556,
+"lat": 22.861623,
+"lon": 72.372242
+},
+{
+"zone": "z081",
+"rank": 82,
+"plantable_space": 0.831,
+"ndvi_latest": 0.3982,
+"score": 0.6705,
+"lat": 22.920967,
+"lon": 72.451106
+},
+{
+"zone": "z082",
+"rank": 83,
+"plantable_space": 0.4198,
+"ndvi_latest": 0.2338,
+"score": 0.1575,
+"lat": 23.002912,
+"lon": 72.461622
+},
+{
+"zone": "z083",
+"rank": 84,
+"plantable_space": 0.9213,
+"ndvi_latest": 0.439,
+"score": 0.5471,
+"lat": 22.902223,
+"lon": 72.812833
+},
+{
+"zone": "z084",
+"rank": 85,
+"plantable_space": 0.4322,
+"ndvi_latest": 0.1926,
+"score": 0.0011,
+"lat": 22.970813,
+"lon": 72.567322
+},
+{
+"zone": "z085",
+"rank": 86,
+"plantable_space": 0.5771,
+"ndvi_latest": 0.1304,
+"score": 0.5047,
+"lat": 22.782475,
+"lon": 72.462084
+},
+{
+"zone": "z086",
+"rank": 87,
+"plantable_space": 0.2673,
+"ndvi_latest": 0.2098,
+"score": 0.0417,
+"lat": 22.791247,
+"lon": 72.482122
+},
+{
+"zone": "z087",
+"rank": 88,
+"plantable_space": 0.3746,
+"ndvi_latest": 0.2842,
+"score": 0.5292,
+"lat": 23.15527,
+"lon": 72.658772
+},
+{
+"zone": "z088",
+"rank": 89,
+"plantable_space": 0.737,
+"ndvi_latest": 0.4016,
+"score": 0.3895,
+"lat": 22.943067,
+"lon": 72.822365
+},
+{
+"zone": "z089",
+"rank": 90,
+"plantable_space": 0.3121,
+"ndvi_latest": 0.3397,
+"score": 0.6432,
+"lat": 22.801894,
+"lon": 72.747645
+},
+{
+"zone": "z090",
+"rank": 91,
+"plantable_space": 0.869,
+"ndvi_latest": 0.3009,
+"score": 0.7339,
+"lat": 23.186109,
+"lon": 72.399654
+},
+{
+"zone": "z091",
+"rank": 92,
+"plantable_space": 0.5928,
+"ndvi_latest": 0.2517,
+"score": 0.8349,
+"lat": 23.182339,
+"lon": 72.743205
+},
+{
+"zone": "z092",
+"rank": 93,
+"plantable_space": 0.638,
+"ndvi_latest": 0.4071,
+"score": 0.6829,
+"lat": 23.126663,
+"lon": 72.44497
+},
+{
+"zone": "z093",
+"rank": 94,
+"plantable_space": 0.2234,
+"ndvi_latest": 0.1032,
+"score": 0.3607,
+"lat": 22.832458,
+"lon": 72.747911
+},
+{
+"zone": "z094",
+"rank": 95,
+"plantable_space": 0.6189,
+"ndvi_latest": 0.3011,
+"score": 0.6262,
+"lat": 23.120332,
+"lon": 72.574647
+},
+{
+"zone": "z095",
+"rank": 96,
+"plantable_space": 0.2025,
+"ndvi_latest": 0.3691,
+"score": 0.7483,
+"lat": 23.031486,
+"lon": 72.5976
+},
+{
+"zone": "z096",
+"rank": 97,
+"plantable_space": 0.6945,
+"ndvi_latest": 0.0764,
+"score": 0.7368,
+"lat": 22.906097,
+"lon": 72.367225
+},
+{
+"zone": "z097",
+"rank": 98,
+"plantable_space": 0.3992,
+"ndvi_latest": 0.3417,
+"score": 0.2052,
+"lat": 23.149914,
+"lon": 72.817868
+},
+{
+"zone": "z098",
+"rank": 99,
+"plantable_space": 0.5705,
+"ndvi_latest": 0.203,
+"score": 0.479,
+"lat": 23.121848,
+"lon": 72.713485
+},
+{
+"zone": "z099",
+"rank": 100,
+"plantable_space": 0.6627,
+"ndvi_latest": 0.3071,
+"score": 0.0775,
+"lat": 22.853713,
+"lon": 72.45697
+},
+{
+"zone": "z100",
+"rank": 101,
+"plantable_space": 0.7574,
+"ndvi_latest": 0.1718,
+"score": 0.5678,
+"lat": 22.786235,
+"lon": 72.360331
+},
+{
+"zone": "z101",
+"rank": 102,
+"plantable_space": 0.4016,
+"ndvi_latest": 0.3188,
+"score": 0.6922,
+"lat": 23.117854,
+"lon": 72.475428
+},
+{
+"zone": "z102",
+"rank": 103,
+"plantable_space": 0.5874,
+"ndvi_latest": 0.2359,
+"score": 0.4663,
+"lat": 22.839251,
+"lon": 72.776831
+},
+{
+"zone": "z103",
+"rank": 104,
+"plantable_space": 0.3494,
+"ndvi_latest": 0.4413,
+"score": 0.9363,
+"lat": 22.788752,
+"lon": 72.559485
+},
+{
+"zone": "z104",
+"rank": 105,
+"plantable_space": 0.8149,
+"ndvi_latest": 0.4372,
+"score": 0.4495,
+"lat": 22.914329,
+"lon": 72.434919
+},
+{
+"zone": "z105",
+"rank": 106,
+"plantable_space": 0.9092,
+"ndvi_latest": 0.1343,
+"score": 0.5815,
+"lat": 22.85087,
+"lon": 72.592033
+},
+{
+"zone": "z106",
+"rank": 107,
+"plantable_space": 0.9146,
+"ndvi_latest": 0.103,
+"score": 0.8202,
+"lat": 23.034372,
+"lon": 72.773431
+},
+{
+"zone": "z107",
+"rank": 108,
+"plantable_space": 0.7275,
+"ndvi_latest": 0.1426,
+"score": 0.8977,
+"lat": 23.02307,
+"lon": 72.342417
+},
+{
+"zone": "z108",
+"rank": 109,
+"plantable_space": 0.2027,
+"ndvi_latest": 0.2467,
+"score": 0.4508,
+"lat": 22.930976,
+"lon": 72.400354
+},
+{
+"zone": "z109",
+"rank": 110,
+"plantable_space": 0.458,
+"ndvi_latest": 0.1764,
+"score": 0.8402,
+"lat": 22.780871,
+"lon": 72.705367
+},
+{
+"zone": "z110",
+"rank": 111,
+"plantable_space": 0.8293,
+"ndvi_latest": 0.098,
+"score": 0.9264,
+"lat": 23.136512,
+"lon": 72.780783
+},
+{
+"zone": "z111",
+"rank": 112,
+"plantable_space": 0.4174,
+"ndvi_latest": 0.1989,
+"score": 0.3929,
+"lat": 23.279396,
+"lon": 72.624588
+},
+{
+"zone": "z112",
+"rank": 113,
+"plantable_space": 0.4705,
+"ndvi_latest": 0.2212,
+"score": 0.2752,
+"lat": 22.804134,
+"lon": 72.380855
+},
+{
+"zone": "z113",
+"rank": 114,
+"plantable_space": 0.826,
+"ndvi_latest": 0.1642,
+"score": 0.9356,
+"lat": 22.904662,
+"lon": 72.462864
+},
+{
+"zone": "z114",
+"rank": 115,
+"plantable_space": 0.5832,
+"ndvi_latest": 0.1259,
+"score": 0.3733,
+"lat": 23.258083,
+"lon": 72.772133
+},
+{
+"zone": "z115",
+"rank": 116,
+"plantable_space": 0.809,
+"ndvi_latest": 0.3024,
+"score": 0.9134,
+"lat": 23.25035,
+"lon": 72.604614
+},
+{
+"zone": "z116",
+"rank": 117,
+"plantable_space": 0.7397,
+"ndvi_latest": 0.0698,
+"score": 0.7324,
+"lat": 23.00543,
+"lon": 72.706334
+},
+{
+"zone": "z117",
+"rank": 118,
+"plantable_space": 0.6834,
+"ndvi_latest": 0.1645,
+"score": 0.049,
+"lat": 23.243389,
+"lon": 72.393656
+},
+{
+"zone": "z118",
+"rank": 119,
+"plantable_space": 0.5541,
+"ndvi_latest": 0.1875,
+"score": 0.2978,
+"lat": 23.149516,
+"lon": 72.818148
+},
+{
+"zone": "z119",
+"rank": 120,
+"plantable_space": 0.3951,
+"ndvi_latest": 0.3124,
+"score": 0.3008,
+"lat": 23.058661,
+"lon": 72.527184
+},
+{
+"zone": "NEAR46",
+"rank": 999,
+"plantable_space": 0.46,
+"ndvi_latest": 0.11,
+"score": 0.5,
+"lat": 23.0302,
+"lon": 72.5801
+},
+{
+"zone": "FAR00",
+"rank": 500,
+"plantable_space": 0.9,
+"ndvi_latest": 0.09,
+"score": 0.4,
+"lat": 23.3,
+"lon": 72.9
+},
+{
+"zone": "FAR01",
+"rank": 501,
+"plantable_space": 0.901,
+"ndvi_latest": 0.09,
+"score": 0.4,
+"lat": 23.301000000000002,
+"lon": 72.9
+},
+{
+"zone": "FAR02",
+"rank": 502,
+"plantable_space": 0.902,
+"ndvi_latest": 0.09,
+"score": 0.4,
+"lat": 23.302,
+"lon": 72.9
+},
+{
+"zone": "FAR03",
+"rank": 503,
+"plantable_space": 0.903,
+"ndvi_latest": 0.09,
+"score": 0.4,
+"lat": 23.303,
+"lon": 72.9
+},
+{
+"zone": "FAR04",
+"rank": 504,
+"plantable_space": 0.904,
+"ndvi_latest": 0.09,
+"score": 0.4,
+"lat": 23.304000000000002,
+"lon": 72.9
+},
+{
+"zone": "FAR05",
+"rank": 505,
+"plantable_space": 0.905,
+"ndvi_latest": 0.09,
+"score": 0.4,
+"lat": 23.305,
+"lon": 72.9
+},
+{
+"zone": "FAR06",
+"rank": 506,
+"plantable_space": 0.906,
+"ndvi_latest": 0.09,
+"score": 0.4,
+"lat": 23.306,
+"lon": 72.9
+},
+{
+"zone": "FAR07",
+"rank": 507,
+"plantable_space": 0.907,
+"ndvi_latest": 0.09,
+"score": 0.4,
+"lat": 23.307000000000002,
+"lon": 72.9
+},
+{
+"zone": "FAR08",
+"rank": 508,
+"plantable_space": 0.908,
+"ndvi_latest": 0.09,
+"score": 0.4,
+"lat": 23.308,
+"lon": 72.9
+},
+{
+"zone": "FAR09",
+"rank": 509,
+"plantable_space": 0.909,
+"ndvi_latest": 0.09,
+"score": 0.4,
+"lat": 23.309,
+"lon": 72.9
+},
+{
+"zone": "FAR10",
+"rank": 510,
+"plantable_space": 0.91,
+"ndvi_latest": 0.09,
+"score": 0.4,
+"lat": 23.310000000000002,
+"lon": 72.9
+},
+{
+"zone": "FAR11",
+"rank": 511,
+"plantable_space": 0.911,
+"ndvi_latest": 0.09,
+"score": 0.4,
+"lat": 23.311,
+"lon": 72.9
+},
+{
+"zone": "FAR12",
+"rank": 512,
+"plantable_space": 0.912,
+"ndvi_latest": 0.09,
+"score": 0.4,
+"lat": 23.312,
+"lon": 72.9
+},
+{
+"zone": "FAR13",
+"rank": 513,
+"plantable_space": 0.913,
+"ndvi_latest": 0.09,
+"score": 0.4,
+"lat": 23.313000000000002,
+"lon": 72.9
+},
+{
+"zone": "FAR14",
+"rank": 514,
+"plantable_space": 0.914,
+"ndvi_latest": 0.09,
+"score": 0.4,
+"lat": 23.314,
+"lon": 72.9
+},
+{
+"zone": "FAR15",
+"rank": 515,
+"plantable_space": 0.915,
+"ndvi_latest": 0.09,
+"score": 0.4,
+"lat": 23.315,
+"lon": 72.9
+},
+{
+"zone": "FAR16",
+"rank": 516,
+"plantable_space": 0.916,
+"ndvi_latest": 0.09,
+"score": 0.4,
+"lat": 23.316,
+"lon": 72.9
+},
+{
+"zone": "FAR17",
+"rank": 517,
+"plantable_space": 0.917,
+"ndvi_latest": 0.09,
+"score": 0.4,
+"lat": 23.317,
+"lon": 72.9
+},
+{
+"zone": "FAR18",
+"rank": 518,
+"plantable_space": 0.918,
+"ndvi_latest": 0.09,
+"score": 0.4,
+"lat": 23.318,
+"lon": 72.9
+},
+{
+"zone": "FAR19",
+"rank": 519,
+"plantable_space": 0.919,
+"ndvi_latest": 0.09,
+"score": 0.4,
+"lat": 23.319,
+"lon": 72.9
+},
+{
+"zone": "FAR20",
+"rank": 520,
+"plantable_space": 0.92,
+"ndvi_latest": 0.09,
+"score": 0.4,
+"lat": 23.32,
+"lon": 72.9
+},
+{
+"zone": "FAR21",
+"rank": 521,
+"plantable_space": 0.921,
+"ndvi_latest": 0.09,
+"score": 0.4,
+"lat": 23.321,
+"lon": 72.9
+},
+{
+"zone": "FAR22",
+"rank": 522,
+"plantable_space": 0.922,
+"ndvi_latest": 0.09,
+"score": 0.4,
+"lat": 23.322,
+"lon": 72.9
+},
+{
+"zone": "FAR23",
+"rank": 523,
+"plantable_space": 0.923,
+"ndvi_latest": 0.09,
+"score": 0.4,
+"lat": 23.323,
+"lon": 72.9
+},
+{
+"zone": "FAR24",
+"rank": 524,
+"plantable_space": 0.924,
+"ndvi_latest": 0.09,
+"score": 0.4,
+"lat": 23.324,
+"lon": 72.9
+},
+{
+"zone": "FAR25",
+"rank": 525,
+"plantable_space": 0.925,
+"ndvi_latest": 0.09,
+"score": 0.4,
+"lat": 23.325,
+"lon": 72.9
+},
+{
+"zone": "FAR26",
+"rank": 526,
+"plantable_space": 0.926,
+"ndvi_latest": 0.09,
+"score": 0.4,
+"lat": 23.326,
+"lon": 72.9
+},
+{
+"zone": "FAR27",
+"rank": 527,
+"plantable_space": 0.927,
+"ndvi_latest": 0.09,
+"score": 0.4,
+"lat": 23.327,
+"lon": 72.9
+},
+{
+"zone": "FAR28",
+"rank": 528,
+"plantable_space": 0.928,
+"ndvi_latest": 0.09,
+"score": 0.4,
+"lat": 23.328,
+"lon": 72.9
+},
+{
+"zone": "FAR29",
+"rank": 529,
+"plantable_space": 0.929,
+"ndvi_latest": 0.09,
+"score": 0.4,
+"lat": 23.329,
+"lon": 72.9
+},
+{
+"zone": "FAR30",
+"rank": 530,
+"plantable_space": 0.93,
+"ndvi_latest": 0.09,
+"score": 0.4,
+"lat": 23.330000000000002,
+"lon": 72.9
+},
+{
+"zone": "FAR31",
+"rank": 531,
+"plantable_space": 0.931,
+"ndvi_latest": 0.09,
+"score": 0.4,
+"lat": 23.331,
+"lon": 72.9
+},
+{
+"zone": "FAR32",
+"rank": 532,
+"plantable_space": 0.932,
+"ndvi_latest": 0.09,
+"score": 0.4,
+"lat": 23.332,
+"lon": 72.9
+},
+{
+"zone": "FAR33",
+"rank": 533,
+"plantable_space": 0.933,
+"ndvi_latest": 0.09,
+"score": 0.4,
+"lat": 23.333000000000002,
+"lon": 72.9
+},
+{
+"zone": "FAR34",
+"rank": 534,
+"plantable_space": 0.934,
+"ndvi_latest": 0.09,
+"score": 0.4,
+"lat": 23.334,
+"lon": 72.9
+},
+{
+"zone": "FAR35",
+"rank": 535,
+"plantable_space": 0.935,
+"ndvi_latest": 0.09,
+"score": 0.4,
+"lat": 23.335,
+"lon": 72.9
+},
+{
+"zone": "FAR36",
+"rank": 536,
+"plantable_space": 0.936,
+"ndvi_latest": 0.09,
+"score": 0.4,
+"lat": 23.336000000000002,
+"lon": 72.9
+},
+{
+"zone": "FAR37",
+"rank": 537,
+"plantable_space": 0.937,
+"ndvi_latest": 0.09,
+"score": 0.4,
+"lat": 23.337,
+"lon": 72.9
+},
+{
+"zone": "FAR38",
+"rank": 538,
+"plantable_space": 0.9380000000000001,
+"ndvi_latest": 0.09,
+"score": 0.4,
+"lat": 23.338,
+"lon": 72.9
+},
+{
+"zone": "FAR39",
+"rank": 539,
+"plantable_space": 0.9390000000000001,
+"ndvi_latest": 0.09,
+"score": 0.4,
+"lat": 23.339000000000002,
+"lon": 72.9
+},
+{
+"zone": "FAR40",
+"rank": 540,
+"plantable_space": 0.9400000000000001,
+"ndvi_latest": 0.09,
+"score": 0.4,
+"lat": 23.34,
+"lon": 72.9
+},
+{
+"zone": "FAR41",
+"rank": 541,
+"plantable_space": 0.9410000000000001,
+"ndvi_latest": 0.09,
+"score": 0.4,
+"lat": 23.341,
+"lon": 72.9
+},
+{
+"zone": "FAR42",
+"rank": 542,
+"plantable_space": 0.9420000000000001,
+"ndvi_latest": 0.09,
+"score": 0.4,
+"lat": 23.342000000000002,
+"lon": 72.9
+},
+{
+"zone": "FAR43",
+"rank": 543,
+"plantable_space": 0.9430000000000001,
+"ndvi_latest": 0.09,
+"score": 0.4,
+"lat": 23.343,
+"lon": 72.9
+},
+{
+"zone": "FAR44",
+"rank": 544,
+"plantable_space": 0.9440000000000001,
+"ndvi_latest": 0.09,
+"score": 0.4,
+"lat": 23.344,
+"lon": 72.9
+},
+{
+"zone": "NEAR44",
+"rank": 998,
+"plantable_space": 0.4499,
+"ndvi_latest": 0.11,
+"score": 0.5,
+"lat": 23.0301,
+"lon": 72.58
+}
+]

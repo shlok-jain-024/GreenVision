@@ -1,0 +1,125 @@
+# GreenGrid city configuration.
+# Every knob the pipeline uses lives here; CLI flags override these values.
+
+city:
+  name: Ahmedabad
+  # bbox = [lon_min, lat_min, lon_max, lat_max]
+  bbox: [72.45, 22.90, 72.70, 23.15]
+
+grid:
+  # Uber H3 resolution used as the common analysis grid. Res 7 (~5 km² cells,
+  # ~161 over the bbox) matches the real data density (250 m MODIS NDVI, CAMS
+  # AQI) and gives the yellow map layer gap-free coverage — res 9 left 99% of
+  # the bbox empty. README warns about exactly this mismatch.
+  h3_resolution: 7
+
+data:
+  # Calendar month of the first data point (1 = January). Used to infer
+  # seasonality from the integer month index that adapters return.
+  start_month: 1              # real AQI window starts 2023-01
+  # Length of the panel. AQI is now REAL (Open-Meteo archive, 2023-01..2026-06 =
+  # 42 months); NDVI/traffic are still mock but generated over the same 42-month
+  # span + zones so all three overlap on the H3 grid.
+  months_history: 42
+  n_mock_zones: 40
+
+adapters:
+  # Per stream: "mock", "csv:<path>", or "custom". All three below are on the
+  # SAME H3 res-7 grid (zone = cell id) so they overlap cell-for-cell.
+  # REAL NDVI — free, no key (NASA MOD13Q1 250m via ORNL DAAC). Refresh with:
+  #   python scripts/modis_ndvi_export.py --config config/city.yaml \
+  #     --start 2023-01 --end 2026-06 --out data/ahmedabad_ndvi.csv
+  green_cover: "csv:data/ahmedabad_ndvi.csv"
+  # INERT PLACEHOLDER — no free historical traffic source. Flat value, and its
+  # MCDA weight is 0 (below), so it never affects any ranking. Disclosed, not real.
+  traffic: "csv:data/ahmedabad_traffic_placeholder.csv"
+  # REAL AQI — free, no key (Open-Meteo Air-Quality archive). Refresh with:
+  #   python scripts/openmeteo_aqi_export.py --config config/city.yaml \
+  #     --start 2023-01 --end 2026-06 --out data/ahmedabad_aqi.csv
+  aqi: "csv:data/ahmedabad_aqi.csv"
+
+sites:
+  # Bare-land site finder: bare-ground patches from Esri 10 m Land Cover
+  # ("Bare ground" class) exported over the bbox as lat,lon,patch_area_m2.
+  # When set, replaces the 1-NDVI plantable-space proxy AND emits
+  # planting_sites.geojson with point coordinates per top zone.
+  enabled: true
+  # candidates_csv: data/ahmedabad_sites.csv
+  min_patch_m2: 100          # ignore patches smaller than one 10 m pixel
+  max_sites_per_zone: 15
+  # "temporal plantability" thresholds on the NDVI stack — CALIBRATE to ground
+  ndvi_ever_green: 0.25
+  ndvi_never_green: 0.15
+  # plantable_csv: data/ahmedabad_plantable.csv   # legacy pre-computed fraction
+
+soil:
+  # SoilGrids 250 m (modelled pH/texture/carbon) + NASA SMAP (measured moisture).
+  # Species selection respects soil pH and texture when these are supplied.
+  # REAL soil — free, no key (ISRIC SoilGrids v2.0). Refresh with:
+  #   python scripts/soilgrids_export.py --config config/city.yaml   #     --out data/ahmedabad_soilgrids.csv
+  # SoilGrids masks built-up land, so cells in the dense core are recovered by
+  # re-sampling offsets around the centre; a few may still come back empty and
+  # simply fall through to pollution-only species matching.
+  soilgrids_csv: data/ahmedabad_soilgrids.csv
+  # moisture_csv: data/ahmedabad_smap.csv   # NASA SMAP needs an Earthdata login
+
+training:
+  iterations: 60            # backtest (zone, cutoff) samples per training run
+  horizon_months: 12        # predict this many months past each cutoff
+  min_history_months: 18    # a cutoff needs at least this much history behind it
+  context_window: 36        # months of raw history shown to the model per prompt
+  memory_k: 8               # past memory records re-injected into each prompt
+  # {city} expands to the city name, keeping each city's memory separate
+  memory_path: models/{city}/memory.jsonl
+  retrain:
+    # always      -> run the backtest loop on every `run`
+    # if_new_months -> only retrain when >= new_months_threshold months of data
+    #                  arrived since the last training run
+    # never       -> reuse existing memory, never backtest
+    policy: if_new_months
+    new_months_threshold: 3
+
+mcda:
+  # Multi-criteria weights for the numeric planting-priority score.
+  # The reasoning model explains and selects species; it never overrides this ranking.
+  weights:
+    # traffic is an inert placeholder (no free historical source), so its 0.20
+    # was redistributed to the two REAL signals: AQI (+0.10) and NDVI decline
+    # (+0.10). Traffic weight 0 => it never influences the ranking.
+    aqi_worsening: 0.40
+    traffic_worsening: 0.0
+    ndvi_decline: 0.35
+    low_green_cover: 0.15
+    plantable_space: 0.10
+  top_n: 10
+
+model:
+  # LOCAL by default. Intel OpenVINO runs a weight-compressed INT4 instruct
+  # model on the CPU: no API key, no per-token cost, no network, and no city
+  # figures leaving the machine that is planning that city. Fetch the model:
+  #   python scripts/fetch_openvino_model.py
+  provider: openvino            # openvino | openrouter | nvidia | mock
+  model_dir: models/openvino/qwen2.5-1.5b-instruct-int4-ov
+  chat_template: chatml
+  device: CPU                   # CPU | GPU | NPU | AUTO — any OpenVINO device
+  max_new_tokens: 2048          # 10 zones of justification + species needs room
+  # Used only by the hosted providers below; ignored when provider: openvino.
+  name: meta/llama-3.1-70b-instruct
+  # Verified fast + reliable on this account. Other options on the endpoint:
+  #   z-ai/glm-5.2                   (throttled to no-token at test time — avoid)
+  #   deepseek-ai/deepseek-v4-pro / -v4-flash  (slower; -flash hit 503 capacity)
+  # NOTE: some listed ids (nemotron-70b, mistral-large-2) return 404 —
+  # confirm a model actually responds before a big run.
+  # Leave base_url blank to use the provider's default endpoint
+  # (nvidia -> https://integrate.api.nvidia.com/v1). Override for a proxy.
+  base_url: ""
+  # Requires the NVIDIA_API_KEY environment variable (never hard-code the key).
+  temperature: 0.2
+  timeout_s: 120                # NIM reasoning models can be slow to first token
+  stream: true                 # stream tokens; per-chunk timeout, not one long wait
+  max_retries: 4
+  json_repair_attempts: 3
+
+run:
+  seed: 42
+  outputs_dir: outputs/{city}   # {city} keeps each city's outputs separate

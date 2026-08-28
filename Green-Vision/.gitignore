@@ -1,0 +1,19 @@
+.venv/
+__pycache__/
+*.pyc
+# trained memory + metadata are runtime state, regenerated on each run
+models/
+outputs/
+# Downloaded source exports may be large or contain municipal-restricted data.
+data/raw/
+data/*.tif
+# Windows shortcut junk
+*.lnk
+# local agent/dev config — may contain secrets and machine-specific paths
+.claude/
+
+# Internal submission-prep documents — strategy notes, not project code.
+submission/
+# Superseded build artefacts and stale duplicates.
+*.zip
+temp_script.js

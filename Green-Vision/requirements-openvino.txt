@@ -1,0 +1,5 @@
+# Optional local-inference extras. See requirements.txt.
+# After installing these, fetch weights with:
+#     python scripts/fetch_openvino_model.py
+openvino-genai>=2024.4
+huggingface_hub>=0.24
