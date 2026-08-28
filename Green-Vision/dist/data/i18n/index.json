@@ -5,6 +5,8 @@
     { "code": "hi", "name": "Hindi",     "native": "हिन्दी",      "dir": "ltr" },
     { "code": "gu", "name": "Gujarati",  "native": "ગુજરાતી",     "dir": "ltr" },
     { "code": "mr", "name": "Marathi",   "native": "मराठी",      "dir": "ltr" },
-    { "code": "bn", "name": "Bengali",   "native": "বাংলা",      "dir": "ltr" }
+    { "code": "bn", "name": "Bengali",   "native": "বাংলা",      "dir": "ltr" },
+    { "code": "es", "name": "Spanish",   "native": "Español",   "dir": "ltr" },
+    { "code": "fr", "name": "French",    "native": "Français",  "dir": "ltr" }
   ]
 }

@@ -7265,6 +7265,11 @@ async function aProbe() {
    whatever renders next, including panels that did not exist when the
    language was chosen.
 
+   The original English of every node and attribute the pass rewrites is
+   kept in a WeakMap, so a second switch - Hindi straight to Gujarati, or
+   either back to English - re-translates from the source in place, with
+   no reload.
+
    What is deliberately NOT translated:
      - anything inside .gva-msg (the assistant's replies arrive already
        in the chosen language from the engine, translating them twice
@@ -7284,6 +7289,13 @@ const LANG_DIR = "data/i18n/";
 /* Nodes whose contents must never be machine-substituted. */
 const NO_TR = "code,pre,script,style,textarea,.gva-msg,.gva-cmp,[data-no-i18n]," +
               "#acList,.gv-gcard h4,.gv-histrow";
+
+/* The English source of every text node and attribute the DOM pass rewrites.
+   A translation carries no key back to English, so without this a second
+   language switch has nothing to match and leaves the first one on screen.
+   Weak, so an entry costs nothing once its node leaves the document. */
+const GVL_TXT = new WeakMap();    // text node -> original English nodeValue
+const GVL_ATTR = new WeakMap();   // element   -> { attr: original English value }
 
 async function langList() {
   if (GVL.list) return GVL.list;
@@ -7324,11 +7336,21 @@ function trString(s) {
   return null;
 }
 
+/* What an English source string should read as right now: its translation
+   when the active dictionary has one, the source itself otherwise - which is
+   also how a switch back to English (GVL.dict === null) restores the page. */
+function trTarget(src) {
+  if (!src || !src.trim() || !GVL.dict) return src;
+  const hit = trString(src);
+  return hit !== null ? hit : src;
+}
+
 function trNode(root) {
-  if (!GVL.dict || !root) return;
+  if (!root) return;
   const walker = document.createTreeWalker(root, NodeFilter.SHOW_TEXT, {
     acceptNode(n) {
-      if (!n.nodeValue || !n.nodeValue.trim()) return NodeFilter.FILTER_REJECT;
+      if (!GVL_TXT.has(n) && (!n.nodeValue || !n.nodeValue.trim()))
+        return NodeFilter.FILTER_REJECT;
       const p = n.parentElement;
       if (!p || p.closest(NO_TR)) return NodeFilter.FILTER_REJECT;
       return NodeFilter.FILTER_ACCEPT;
@@ -7337,13 +7359,15 @@ function trNode(root) {
   const jobs = [];
   let n;
   while ((n = walker.nextNode())) {
-    const out = trString(n.nodeValue);
-    if (out !== null && out !== n.nodeValue) jobs.push([n, out]);
+    // Always translate from the English source, never from what is on screen.
+    const src = GVL_TXT.has(n) ? GVL_TXT.get(n) : n.nodeValue;
+    const want = trTarget(src);
+    if (want !== n.nodeValue) jobs.push([n, src, want]);
   }
   // Mutate after walking: editing during the walk invalidates the iterator.
-  for (const [node, val] of jobs) {
+  for (const [node, src, val] of jobs) {
+    if (!GVL_TXT.has(node) && val !== src) GVL_TXT.set(node, src);
     node.nodeValue = val;
-    if (node.parentElement) node.parentElement.setAttribute("data-i18n-done", "1");
   }
 
   // Attributes people actually read.
@@ -7351,10 +7375,15 @@ function trNode(root) {
   els.forEach(el => {
     if (el.closest(NO_TR)) return;
     ["placeholder", "title", "aria-label"].forEach(attr => {
-      const v = el.getAttribute(attr);
-      if (!v) return;
-      const out = trString(v);
-      if (out !== null && out !== v) el.setAttribute(attr, out);
+      const cur = el.getAttribute(attr);
+      if (cur == null) return;
+      const store = GVL_ATTR.get(el);
+      const src = store && attr in store ? store[attr] : cur;
+      const want = trTarget(src);
+      if (want === cur) return;
+      if (!store) GVL_ATTR.set(el, { [attr]: src });
+      else if (!(attr in store)) store[attr] = src;
+      el.setAttribute(attr, want);
     });
   });
 }
@@ -7395,7 +7424,7 @@ async function setLang(code, remember) {
   const row = list.find(l => l.code === code) || list[0];
   code = row.code;
 
-  GVL.dict = await langDict(code);
+  GVL.dict = await langDict(code);          // null for English
   GVL.code = code;
   document.documentElement.lang = code;
   document.documentElement.dir = row.dir || "ltr";
@@ -7403,13 +7432,9 @@ async function setLang(code, remember) {
 
   if (remember) { try { localStorage.setItem(LANG_KEY, code); } catch (e) {} }
 
-  if (code === "en") {
-    // Nothing can un-translate the live DOM reliably, and re-rendering every
-    // panel by hand would be a second source of truth. A reload is honest,
-    // instant from cache, and puts the page back in its source language.
-    if (remember) location.reload();
-    return;
-  }
+  // trNode() works from each node's stored English source, so this both
+  // applies a new language over an old one and, when GVL.dict is null,
+  // restores English - every switch happens in place, without a reload.
   applyLangNow();
   langObserve();
   renderLangBtn();

@@ -356,17 +356,17 @@ matching rather than inventing a value.
   forbids that read, so the page asks you to pick the file — parsed in-page,
   never uploaded.
 
-- **Five languages.** English, Hindi, Gujarati, Marathi and Bengali — the whole
-  interface, including the assistant's replies and the species reasoning, not
-  just the labels.
+- **Seven languages.** English, Hindi, Gujarati, Marathi, Bengali, Spanish and
+  French — the whole interface, including the assistant's replies and the
+  species reasoning, not just the labels. The picker switches the live page in
+  place; it does not reload.
 
-  `data/i18n/index.json` used to register thirteen, but only these five have a
-  dictionary file. The other eight fell back to English silently, so picking
-  Tamil got you English with no notice, and Urdu was registered `"dir": "rtl"`
-  while never resolving to Urdu, so right-to-left layout never switched on.
-  A language is listed only when `data/i18n/<code>.json` exists. `/api/health`
-  and the baked `meta.json` count what is in the registry, so they now report
-  five.
+  `data/i18n/index.json` used to register thirteen, but a language is listed
+  only when `data/i18n/<code>.json` exists — the registered-but-fileless codes
+  fell back to English silently, so picking Tamil got you English with no
+  notice, and Urdu was registered `"dir": "rtl"` while never resolving to Urdu,
+  so right-to-left layout never switched on. `/api/health` and the baked
+  `meta.json` count what is in the registry, so they now report seven.
 
 - **Storage.** Designs are saved to browser LocalStorage. Nothing is uploaded
   unless you set `COMMUNITY_URL` and publish deliberately.
