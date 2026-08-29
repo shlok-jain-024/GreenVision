@@ -297,7 +297,7 @@ body.gv-dock-on .gv-greenleg{left:444px;}
     <div class="goallabel">What do you want to build here?</div>
     <div class="goalgrid" id="goalGrid"></div>
     <button class="go" id="enterBtn">Open the map →</button>
-    <p style="font-size:11px;margin-top:14px;opacity:.8">Runs free, no account, no keys. Sign-in and the shared gallery are optional and need a server.</p>
+    <p style="font-size:11px;margin-top:14px;opacity:.8">Runs free. No account, no keys, no server — your designs are saved in this browser.</p>
   </div>
 </div>
 
@@ -1477,25 +1477,6 @@ window.addEventListener("DOMContentLoaded",()=>{
   box-shadow:0 4px 14px -3px rgba(0,0,0,.45); letter-spacing:.01em;
 }
 
-/* ---------- account button ---------- */
-.gv-authbtn{
-  position:absolute; top:70px; right:14px; z-index:1100;
-  height:40px; padding:0 13px; border:0; border-radius:13px;
-  display:flex; align-items:center; gap:8px;
-  font:700 12.5px 'Manrope',sans-serif; color:var(--ink);
-  transition:transform .12s ease;
-}
-.gv-authbtn:hover{ transform:translateY(-2px); }
-.gv-authbtn svg{ width:17px; height:17px; }
-.gv-authbtn em{ font-style:normal; }
-.gv-avatar{
-  width:44px; height:44px; border-radius:14px; flex:none;
-  display:flex; align-items:center; justify-content:center;
-  background:linear-gradient(135deg,var(--brand),var(--sky)); color:#fff;
-  font:800 18px 'Sora',sans-serif;
-}
-.gv-avatar-sm{ width:26px; height:26px; border-radius:9px; font-size:12px; }
-
 /* ---------- dock ---------- */
 #gvDock{
   position:absolute; top:0; left:0; bottom:0; z-index:1250;
@@ -1601,31 +1582,7 @@ code{ font:700 11.5px ui-monospace,Menlo,Consolas,monospace; background:var(--bg
 }
 .gv-prov-note b{ color:var(--ink); }
 
-/* ---------- auth ---------- */
-.gv-auth{ padding:2px 0 4px; }
-.gv-lab{ display:block; font:800 11px 'Manrope',sans-serif; letter-spacing:.06em; text-transform:uppercase; color:var(--ink-soft); margin-bottom:6px; }
-.gv-opt{ text-transform:none; letter-spacing:0; opacity:.7; font-weight:600; }
-.gv-input{
-  width:100%; border:1.5px solid var(--line); background:var(--card-solid); color:var(--ink);
-  border-radius:12px; padding:12px 14px; font:600 14.5px 'Manrope',sans-serif; outline:none;
-  transition:border-color .15s;
-}
-.gv-input:focus{ border-color:var(--brand); }
-.gv-google{ width:100%; display:flex; align-items:center; justify-content:center; gap:9px; }
-.gv-or{ position:relative; text-align:center; margin:16px 0; }
-.gv-or::before{ content:""; position:absolute; left:0; right:0; top:50%; height:1px; background:var(--line); }
-.gv-or span{ position:relative; background:var(--card-solid); padding:0 12px; font:700 11px 'Manrope',sans-serif; color:var(--ink-soft); }
-.gv-err{ color:var(--red); font-size:12px; font-weight:700; margin-top:9px; min-height:16px; }
-.gv-mode{ margin-top:16px; padding:11px 13px; border-radius:12px; font-size:11.5px; line-height:1.6; font-weight:600; }
-.gv-mode-local{ background:rgba(245,166,35,.12); border:1px solid rgba(245,166,35,.4); color:var(--ink); }
-.gv-mode-server{ background:rgba(18,185,129,.11); border:1px solid rgba(18,185,129,.38); color:var(--ink); }
-.gv-sent{ text-align:center; padding:22px 6px; }
-.gv-sent-ico{ font-size:38px; margin-bottom:10px; }
-.gv-sent h4{ margin:0 0 8px; font-size:18px; }
-.gv-acct{ display:flex; gap:14px; align-items:center; margin-bottom:16px; }
-.gv-acct-name{ font:800 16px 'Sora',sans-serif; }
-.gv-acct-mail{ font-size:12.5px; font-weight:600; color:var(--ink-soft); }
-.gv-acct-tag{ display:inline-block; margin-top:4px; font:800 9.5px 'Manrope',sans-serif; letter-spacing:.08em; text-transform:uppercase; color:var(--brand-dk); }
+/* ---------- design stat row (Library detail) ---------- */
 .gv-statrow{ display:grid; grid-template-columns:repeat(3,1fr); gap:8px; }
 .gv-statrow>div{ background:var(--bg2); border-radius:12px; padding:11px 10px; text-align:center; }
 .gv-statrow b{ display:block; font:800 17px 'Sora',sans-serif; letter-spacing:-.02em; }
@@ -1901,7 +1858,6 @@ code{ font:700 11.5px ui-monospace,Menlo,Consolas,monospace; background:var(--bg
   #gvDock{ width:100vw; top:auto; height:80vh; bottom:0; border-right:0; border-top:1px solid var(--glass-brd);
     border-radius:22px 22px 0 0; transform:translateY(102%); }
   #gvDock.on{ transform:translateY(0); }
-  .gv-authbtn{ top:auto; bottom:76px; right:14px; }
   .gv-palette, .gv-mgrid, .gv-gal, .gv-proj-grid{ grid-template-columns:1fr 1fr; }
   .gv-verdict{ flex-direction:column; text-align:center; }
   .gv-check span{ flex-basis:96px; }
@@ -1911,7 +1867,7 @@ code{ font:700 11.5px ui-monospace,Menlo,Consolas,monospace; background:var(--bg
 }
 @media print{
   #gvDock{ position:static; transform:none; width:100%; height:auto; box-shadow:none; border:0; }
-  .gv-authbtn,.gv-tabs,.gv-dockclose,.gv-studio-actions,.gv-areaacts{ display:none !important; }
+  .gv-tabs,.gv-dockclose,.gv-studio-actions,.gv-areaacts{ display:none !important; }
   .gv-dockbody{ overflow:visible; }
 }
 
@@ -1942,9 +1898,7 @@ code{ font:700 11.5px ui-monospace,Menlo,Consolas,monospace; background:var(--bg
   background:linear-gradient(135deg,rgba(47,126,240,.12),transparent); border:1px solid var(--line); }
 .gv-libhead b{ font:800 15px 'Sora',sans-serif; letter-spacing:-.02em; }
 .gv-libhead p{ margin:5px 0 0; font-size:11.5px; line-height:1.55; font-weight:600; color:var(--ink-soft); }
-.gv-gpub{ position:absolute; top:8px; left:8px; width:22px; height:22px; border-radius:7px;
-  background:var(--sky); color:#fff; font:800 13px 'Sora',sans-serif; display:flex; align-items:center; justify-content:center;
-  box-shadow:0 3px 9px -2px rgba(0,0,0,.45); }
+.gv-libacts{ display:flex; gap:8px; margin-top:10px; }
 .gv-galtabs{ flex-wrap:wrap; }
 
 /* ---------- 3D builder launcher in the Studio panel ---------- */
@@ -2022,12 +1976,12 @@ code{ font:700 11.5px ui-monospace,Menlo,Consolas,monospace; background:var(--bg
    Adds, on top of the existing Green Vision app:
 
      1. AOI      100 km2 analysis perimeter on click; every reading scoped to it
-     2. Auth     email sign-in (magic link) + Google, session, saved work
+     2. Library  designs saved to this browser's localStorage; export / import
      3. Traffic  present flow + modelled historical congestion, bottleneck icons
      4. Studio   place trees / paths / water / furniture inside the AOI
      5. Cost     bill of quantities in INR from what was actually placed
      6. Review   design score, named flaws, 20-25 year growth projection
-     7. Gallery  browse, fork and publish designs
+     7. Library  browse, reopen and fork your saved designs
 
    Install: keep Front_End.html as-is and add these two lines immediately
    before </body> (after the existing <script> block, so `map`, `CFG`,
@@ -2062,15 +2016,6 @@ GV.CFG = {
   // 100 km2 as a circle: r = sqrt(100/PI) km = 5.6419 km
   AOI_KM2: 100,
   AOI_SHAPE: "circle",           // "circle" | "square"
-
-  /* --- Backend ------------------------------------------------------
-     All three are optional. With none of them set the module runs
-     entirely on the device: sign-in is local-only, and the gallery
-     shows just your own saved designs. See server_studio.py for the
-     endpoint contract each of these expects.                          */
-  AUTH_URL:      "",             // e.g. "https://api.example.com"
-  COMMUNITY_URL: "",             // e.g. "https://api.example.com"
-  GOOGLE_CLIENT_ID: "",          // for "Continue with Google"
 
   /* --- Traffic ------------------------------------------------------
      Without a key the traffic layer is MODELLED from OSM road topology
@@ -2589,161 +2534,13 @@ GV.aoiCensus = aoiCensus;
 GV.aoiVeg = aoiVeg;
 
 /* =====================================================================
-   4. ACCOUNTS
+   4. LOCAL LIBRARY — designs live in this browser, nothing signs in
    =====================================================================
-   Two honest modes, and the UI says which one is running:
-
-   LOCAL (no AUTH_URL set) — your email is stored on this device only,
-   as a label for your designs. It is not verified and it protects
-   nothing. Clearing site data signs you out and loses unexported work.
-
-   SERVER (AUTH_URL set) — passwordless magic link, or Google. The
-   browser never holds a long-lived secret; it exchanges a one-time
-   token for a short session token. See server_studio.py.
-
-   Password auth is deliberately not offered. A static site cannot hash
-   or store a password safely, and a half-built password box invites
-   people to reuse a real one.
+   There is no account and no server. Every design is saved to this
+   browser's localStorage (see `store`), listed in the Library and the
+   History tabs, and exportable to a .json file you move yourself.
+   Clearing this site's data is the only thing that deletes them.
    ===================================================================== */
-
-GV.auth = {
-  user: store.get("user", null),
-  mode: GV.CFG.AUTH_URL ? "server" : "local",
-
-  isIn() { return !!this.user; },
-  label() { return this.user ? (this.user.name || this.user.email) : "Sign in"; },
-
-  async signInLocal(email, name) {
-    if (!/^[^@\s]+@[^@\s]+\.[^@\s]{2,}$/.test(email)) throw new Error("That email address doesn't look right.");
-    this.user = { email: email.toLowerCase().trim(), name: (name || "").trim() || email.split("@")[0], local: true, since: Date.now() };
-    store.set("user", this.user);
-    return this.user;
-  },
-
-  async sendMagicLink(email) {
-    const r = await fetchT(GV.CFG.AUTH_URL + "/api/auth/magic", {
-      method: "POST", headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ email, redirect: location.origin + location.pathname })
-    }, 15000);
-    if (!r || !r.ok) throw new Error("Couldn't reach the sign-in service. Try again, or use device-only mode.");
-    return true;
-  },
-
-  // Called on load if the URL carries ?gv_token=...
-  async redeem(token) {
-    const j = await getJSON(GV.CFG.AUTH_URL + "/api/auth/redeem", {
-      method: "POST", headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ token })
-    }, 15000);
-    if (!j || !j.session) return null;
-    this.user = { email: j.email, name: j.name || j.email.split("@")[0], session: j.session, local: false, since: Date.now() };
-    store.set("user", this.user);
-    return this.user;
-  },
-
-  signOut() { this.user = null; store.del("user"); renderAuthBtn(); toast("Signed out"); },
-
-  headers() {
-    return this.user && this.user.session
-      ? { "Authorization": "Bearer " + this.user.session, "Content-Type": "application/json" }
-      : { "Content-Type": "application/json" };
-  }
-};
-
-function openAuth() {
-  if (GV.auth.isIn()) return openAccountSheet();
-  const server = GV.CFG.AUTH_URL;
-  sheet("Sign in", `
-    <div class="gv-auth">
-      <p class="gv-lede">Sign in to keep your designs, publish them to the gallery, and pick up where you left off on another device.</p>
-
-      ${GV.CFG.GOOGLE_CLIENT_ID ? `
-      <button class="gv-btn gv-btn-ghost gv-google" id="gvGoogle">
-        <svg viewBox="0 0 24 24" width="17" height="17"><path fill="#4285F4" d="M22 12.2c0-.7-.06-1.4-.18-2H12v3.8h5.6a4.8 4.8 0 01-2.08 3.15v2.6h3.36C20.85 17.9 22 15.3 22 12.2z"/><path fill="#34A853" d="M12 22c2.7 0 4.97-.9 6.62-2.43l-3.36-2.6c-.93.63-2.13 1-3.26 1-2.5 0-4.63-1.7-5.39-3.97H3.13v2.68A10 10 0 0012 22z"/><path fill="#FBBC05" d="M6.61 13.99a6 6 0 010-3.83V7.48H3.13a10 10 0 000 9.02l3.48-2.51z"/><path fill="#EA4335" d="M12 5.98c1.47 0 2.79.5 3.83 1.5l2.87-2.87A10 10 0 003.13 7.48l3.48 2.68C7.37 7.7 9.5 5.98 12 5.98z"/></svg>
-        Continue with Google
-      </button>
-      <div class="gv-or"><span>or</span></div>` : ""}
-
-      <label class="gv-lab" for="gvEmail">Email address</label>
-      <input class="gv-input" id="gvEmail" type="email" inputmode="email" autocomplete="email" placeholder="you@example.com">
-
-      ${server ? "" : `
-      <label class="gv-lab" for="gvName" style="margin-top:12px">Display name <span class="gv-opt">optional</span></label>
-      <input class="gv-input" id="gvName" type="text" autocomplete="name" placeholder="Shown on designs you publish">`}
-
-      <button class="gv-btn gv-btn-primary" id="gvGo" style="margin-top:16px;width:100%">
-        ${server ? "Email me a sign-in link" : "Continue"}
-      </button>
-      <div class="gv-err" id="gvErr"></div>
-
-      <div class="gv-mode ${server ? "gv-mode-server" : "gv-mode-local"}">
-        ${server
-          ? "<b>Verified sign-in.</b> We'll email you a link that signs you in — there's no password to remember or leak."
-          : "<b>This device only.</b> No sign-in service is configured, so your email is just a label on your work and nothing is verified. Designs stay in this browser until you export or publish them. Set <code>AUTH_URL</code> in studio.js to turn on real accounts."}
-      </div>
-    </div>`);
-
-  $("#gvGo").onclick = async () => {
-    const email = ($("#gvEmail").value || "").trim();
-    const err = $("#gvErr");
-    err.textContent = "";
-    try {
-      if (server) {
-        await GV.auth.sendMagicLink(email);
-        $(".gv-auth").innerHTML = `<div class="gv-sent">
-          <div class="gv-sent-ico">\u2709</div>
-          <h4>Check your inbox</h4>
-          <p class="gv-lede">We sent a sign-in link to <b>${email.replace(/</g, "&lt;")}</b>. It works once and expires in 15 minutes.</p>
-        </div>`;
-      } else {
-        await GV.auth.signInLocal(email, ($("#gvName") || {}).value);
-        closeSheet(); renderAuthBtn();
-        toast("Signed in as " + GV.auth.label());
-      }
-    } catch (e) { err.textContent = e.message; }
-  };
-  const g = $("#gvGoogle"); if (g) g.onclick = startGoogle;
-  setTimeout(() => { const el = $("#gvEmail"); if (el) el.focus(); }, 120);
-}
-
-function startGoogle() {
-  const p = new URLSearchParams({
-    client_id: GV.CFG.GOOGLE_CLIENT_ID,
-    redirect_uri: GV.CFG.AUTH_URL + "/api/auth/google/callback",
-    response_type: "code",
-    scope: "openid email profile",
-    state: btoa(location.origin + location.pathname),
-    prompt: "select_account"
-  });
-  location.href = "https://accounts.google.com/o/oauth2/v2/auth?" + p;
-}
-
-function openAccountSheet() {
-  const u = GV.auth.user;
-  const mine = store.get("designs", []);
-  sheet("Your account", `
-    <div class="gv-acct">
-      <div class="gv-avatar">${(u.name || u.email)[0].toUpperCase()}</div>
-      <div>
-        <div class="gv-acct-name">${(u.name || "").replace(/</g, "&lt;")}</div>
-        <div class="gv-acct-mail">${u.email.replace(/</g, "&lt;")}</div>
-        <div class="gv-acct-tag">${u.local ? "Device-only account" : "Verified account"}</div>
-      </div>
-    </div>
-    <div class="gv-statrow">
-      <div><b>${mine.length}</b><span>designs</span></div>
-      <div><b>${fmt(sum(mine.map(d => (d.items || []).length)))}</b><span>elements placed</span></div>
-      <div><b>${inr(sum(mine.map(d => (d.cost && d.cost.grand) || 0)))}</b><span>planned spend</span></div>
-    </div>
-    <button class="gv-btn gv-btn-ghost" id="gvExportAll" style="width:100%;margin-top:14px">Export all designs (.json)</button>
-    <button class="gv-btn gv-btn-ghost" id="gvImport" style="width:100%;margin-top:8px">Import designs</button>
-    <button class="gv-btn gv-btn-danger" id="gvOut" style="width:100%;margin-top:14px">Sign out</button>
-    <p class="gv-fine">${u.local ? "Exporting is the only backup — clearing this browser's site data deletes your designs." : "Your designs sync to your account."}</p>`);
-
-  $("#gvOut").onclick = () => { GV.auth.signOut(); closeSheet(); };
-  $("#gvExportAll").onclick = () => download("greenvision-designs.json", JSON.stringify(mine, null, 2));
-  $("#gvImport").onclick = importDesigns;
-}
 
 function download(name, text) {
   const b = new Blob([text], { type: "application/json" });
@@ -3234,7 +3031,7 @@ function newDesign(aoi) {
     plot: null,          // {ring:[[lat,lon]...], area_m2}
     items: [],           // {k, type, id|species, latlng|ring|line, qty, unit}
     created: Date.now(),
-    author: GV.auth.user ? (GV.auth.user.name || GV.auth.user.email) : "",
+    author: "",
     cost: null, review: null
   };
 }
@@ -4588,13 +4385,11 @@ function drawReviewPanel() {
     </div>
 
     <div class="gv-studio-actions">
-      <button class="gv-btn gv-btn-primary" id="gvSave">Save design</button>
-      <button class="gv-btn gv-btn-ghost" id="gvPublish">Publish to gallery</button>
+      <button class="gv-btn gv-btn-primary" id="gvSave">Save to Library</button>
       <button class="gv-btn gv-btn-ghost" id="gvBack">Keep editing</button>
     </div>`);
 
-  $("#gvSave").onclick = () => saveDesign(false);
-  $("#gvPublish").onclick = () => saveDesign(true);
+  $("#gvSave").onclick = () => saveDesign();
   $("#gvBack").onclick = () => openDock("studio");
 }
 
@@ -4610,59 +4405,35 @@ function emptyStudio(which) {
    11. GALLERY
    ===================================================================== */
 
-async function saveDesign(publish) {
+function saveDesign() {
   const d = GV.design;
   if (!d.name) {
     const nm = prompt("Name this design", (window.lastPlace || "Green plan") + " \u2014 " + new Date().toLocaleDateString("en-IN"));
     if (nm === null) return;
     d.name = nm.trim() || "Untitled";
   }
-  d.author = GV.auth.user ? (GV.auth.user.name || GV.auth.user.email) : "Anonymous";
   d.city = (window.lastGeo && window.lastGeo.city) || d.city;
   d.place = window.lastPlace || d.place;
   d.saved = Date.now();
 
-  if (publish) d.published = true;
   const all = store.get("designs", []);
   const i = all.findIndex(x => x.id === d.id);
   if (i >= 0) all[i] = d; else all.push(d);
   store.set("designs", all);
-  logHistory(publish ? "published" : "saved", d);
-
-  if (!publish) { toast("Saved to this device"); return; }
-
-  if (!GV.auth.isIn()) { openAuth(); toast("Sign in to publish"); return; }
-  if (!GV.CFG.COMMUNITY_URL) {
-    toast("No gallery server set — saved locally instead");
-    openDock("gallery");
-    return;
-  }
-  const r = await fetchT(GV.CFG.COMMUNITY_URL + "/api/designs", {
-    method: "POST", headers: GV.auth.headers(), body: JSON.stringify(d)
-  }, 15000);
-  toast(r && r.ok ? "Published to the gallery" : "Couldn't reach the gallery — saved locally");
+  logHistory("saved", d);
+  toast("Saved to the Library");
   openDock("gallery");
 }
 
-async function drawGallery() {
-  dockBody(`<div class="gv-load"><div class="gv-spin"></div><p>Loading designs\u2026</p></div>`);
-
-  const mine = store.get("designs", []).map(d => ({ ...d, _mine: true }));
-  let remote = [];
-  if (GV.CFG.COMMUNITY_URL) {
-    const j = await getJSON(GV.CFG.COMMUNITY_URL + "/api/designs?limit=60" +
-      (GV.aoi ? "&near=" + round(GV.aoi.lat, 3) + "," + round(GV.aoi.lon, 3) : ""), {}, 12000);
-    if (j && Array.isArray(j.designs)) remote = j.designs;
-  }
-  const all = mine.concat(remote.filter(r => !mine.some(m => m.id === r.id)));
+function drawGallery() {
+  const all = store.get("designs", []).slice()
+    .sort((a, b) => (b.saved || b.updated || b.created || 0) - (a.saved || a.updated || a.created || 0));
   GV._gallery = all;
 
   if (!all.length) {
     dockBody(`<div class="gv-empty">
-      <h4>The gallery is empty</h4>
-      <p>${GV.CFG.COMMUNITY_URL
-        ? "Nothing has been published near here yet. Design something and be the first."
-        : "No gallery server is configured, so this shows only what you've saved on this device. Set <code>COMMUNITY_URL</code> in studio.js to share designs between people \u2014 see server_studio.py for the two endpoints it needs."}</p>
+      <h4>The Library is empty</h4>
+      <p>Designs you save land here \u2014 open any card to reopen it in the Studio, or fork a copy. Everything is kept in this browser only; use Export to move designs to another device.</p>
       <button class="gv-btn gv-btn-primary" onclick="GV.ui.studio()">Design something</button>
       <button class="gv-btn gv-btn-ghost" id="gvImp">Import a design file</button>
     </div>`);
@@ -4670,37 +4441,34 @@ async function drawGallery() {
     return;
   }
 
-  all.sort((a, b) => ((b.review && b.review.score) || 0) - ((a.review && a.review.score) || 0));
-
-  const published = all.filter(d => d.published || !d._mine);   // remote items are, by definition, published
+  const near = GV.aoi ? all.filter(d => d.aoi && haversine(d.aoi.lat, d.aoi.lon, GV.aoi.lat, GV.aoi.lon) < 25) : [];
 
   dockBody(`
     <div class="gv-libhead">
-      <b>Published designs</b>
-      <p>${GV.CFG.COMMUNITY_URL
-        ? "Browse what people have shared. Open any card to see its review and flaws, or fork it into your own Studio."
-        : "Your published designs live here. Sharing them with other people needs a server (<code>COMMUNITY_URL</code>) \u2014 until then the Library is your own published shelf. Open any card to reopen or fork it."}</p>
+      <b>Your Library</b>
+      <p>${all.length} design${all.length > 1 ? "s" : ""} saved in this browser. Open a card to reopen or fork it. Nothing is uploaded \u2014 use Export as your backup.</p>
+      <div class="gv-libacts">
+        <button class="gv-mini" id="gvLibExport">Export all (.json)</button>
+        <button class="gv-mini" id="gvLibImport">Import</button>
+      </div>
     </div>
     <div class="gv-galtabs">
-      <button class="on" data-f="published">Published (${published.length})</button>
-      <button data-f="mine">Yours (${mine.length})</button>
-      <button data-f="near">Near here</button>
-      <button data-f="all">All (${all.length})</button>
+      <button class="on" data-f="all">All (${all.length})</button>
+      <button data-f="near">Near here (${near.length})</button>
     </div>
-    <div class="gv-gal" id="gvGal">${(published.length ? published : all).map(galCard).join("")}</div>`);
+    <div class="gv-gal" id="gvGal">${all.map(galCard).join("")}</div>`);
 
-  const filt = f => f === "mine" ? all.filter(d => d._mine)
-      : f === "near" && GV.aoi ? all.filter(d => d.aoi && haversine(d.aoi.lat, d.aoi.lon, GV.aoi.lat, GV.aoi.lon) < 25)
-      : f === "published" ? published
-      : all;
+  const filt = f => f === "near" ? near : all;
 
   $$(".gv-galtabs button").forEach(b => b.onclick = () => {
     $$(".gv-galtabs button").forEach(x => x.classList.remove("on"));
     b.classList.add("on");
     const list = filt(b.dataset.f);
-    $("#gvGal").innerHTML = list.length ? list.map(galCard).join("") : `<p class="gv-lede" style="padding:20px 4px">Nothing here yet. Finish a design and publish it from the Review tab.</p>`;
+    $("#gvGal").innerHTML = list.length ? list.map(galCard).join("") : `<p class="gv-lede" style="padding:20px 4px">Nothing saved near the current area yet.</p>`;
     bindGal();
   });
+  $("#gvLibExport").onclick = () => download("greenvision-designs.json", JSON.stringify(all, null, 2));
+  $("#gvLibImport").onclick = importDesigns;
   bindGal();
 }
 
@@ -4712,13 +4480,12 @@ function galCard(d) {
     <div class="gv-gthumb">${thumbSVG(d)}</div>
     <div class="gv-gbody">
       <b>${(d.name || "Untitled").replace(/</g, "&lt;")}</b>
-      <span class="gv-gmeta">${(d.place || d.city || "").replace(/</g, "&lt;")}${d.author ? " \u00B7 " + d.author.replace(/</g, "&lt;") : ""}</span>
+      <span class="gv-gmeta">${(d.place || d.city || "").replace(/</g, "&lt;")}${d.mode === "3d" ? " \u00B7 3D" : ""}</span>
       <div class="gv-gstats">
         <em>${nt} trees</em><em>${d.plot ? fmt(round(d.plot.area_m2)) + " m\u00B2" : "\u2014"}</em><em>${d.cost ? inr(d.cost.grand) : "\u2014"}</em>
       </div>
     </div>
     ${s != null ? `<div class="gv-gscore" style="--gc:${col}">${s}</div>` : ""}
-    ${d.published ? `<div class="gv-gpub" title="Published">\u2191</div>` : ""}
   </article>`;
 }
 
@@ -4752,7 +4519,7 @@ function openGalDesign(id) {
   sheet(d.name || "Design", `
     <div class="gv-gdetail">
       <div class="gv-gthumb gv-gthumb-lg">${thumbSVG(d)}</div>
-      <p class="gv-lede">${(d.place || d.city || "")}${d.author ? " \u00B7 by " + d.author : ""}${d.plot ? " \u00B7 " + fmt(round(d.plot.area_m2)) + " m\u00B2" : ""}</p>
+      <p class="gv-lede">${(d.place || d.city || "")}${d.mode === "3d" ? " \u00B7 3D build" : ""}${d.plot ? " \u00B7 " + fmt(round(d.plot.area_m2)) + " m\u00B2" : ""}</p>
       ${r ? `<div class="gv-statrow">
         <div><b>${r.score}</b><span>review score</span></div>
         <div><b>${d.cost ? inr(d.cost.grand) : "\u2014"}</b><span>to build</span></div>
@@ -4761,12 +4528,12 @@ function openGalDesign(id) {
       ${r && r.flaws.length ? `<h5 class="gv-h5">Known issues</h5><ul class="gv-wins">${r.flaws.slice(0, 4).map(f => `<li><b>${f.title}</b> \u2014 ${f.fix}</li>`).join("")}</ul>` : ""}
       <button class="gv-btn gv-btn-primary" id="gvFork" style="width:100%;margin-top:14px">Open a copy in the Studio</button>
       <button class="gv-btn gv-btn-ghost" id="gvDl" style="width:100%;margin-top:8px">Download this design</button>
-      ${d._mine ? `<button class="gv-btn gv-btn-danger" id="gvDel" style="width:100%;margin-top:8px">Delete</button>` : ""}
+      <button class="gv-btn gv-btn-danger" id="gvDel" style="width:100%;margin-top:8px">Delete</button>
     </div>`);
 
   $("#gvFork").onclick = () => {
     const copy = JSON.parse(JSON.stringify(d));
-    copy.id = uid(); copy.name = (d.name || "Design") + " (copy)"; copy._mine = true; copy.created = Date.now();
+    copy.id = uid(); copy.name = (d.name || "Design") + " (copy)"; copy.created = Date.now();
     GV.design = copy;
     GV.aoi = makeAOI(d.aoi.lat, d.aoi.lon);
     drawAOI(GV.aoi, false);
@@ -4785,17 +4552,16 @@ function openGalDesign(id) {
 /* =====================================================================
    11b. HISTORY — a chronological log of your work
    =====================================================================
-   Every design autosaves as you place things, and each save, publish and
-   review is logged. This tab is that log, newest first, grouped by day,
-   with one-tap resume. It reads the event log and resolves each entry to
-   the live saved design, so "Open" always restores the latest state.
+   Every design autosaves as you place things, and each save and review is
+   logged. This tab is that log, newest first, grouped by day, with one-tap
+   resume. It reads the event log and resolves each entry to the live saved
+   design, so "Open" always restores the latest state.
    ===================================================================== */
 
 const HIST_META = {
   created:   { ico: "\u2795", label: "Started",   col: "var(--ink-soft)" },
   draft:     { ico: "\u270E", label: "Autosaved", col: "var(--ink-soft)" },
   saved:     { ico: "\u2193", label: "Saved",     col: "var(--brand-dk)" },
-  published: { ico: "\u2191", label: "Published", col: "var(--sky)" },
   reviewed:  { ico: "\u2713", label: "Reviewed",  col: "var(--violet)" }
 };
 
@@ -4853,7 +4619,7 @@ function drawHistory() {
         </div>`;
       }).join("")}
     `).join("")}
-    <div class="gv-prov-note">History and autosaves live in this browser only. Publishing a design copies it to the Library; ${GV.CFG.COMMUNITY_URL ? "with a server set, published designs sync to your account." : "with a server set (<code>COMMUNITY_URL</code>), they'd sync across devices too."}</div>`);
+    <div class="gv-prov-note">History and autosaves live in this browser only. Saving a design adds it to the Library; nothing is uploaded — use the Library's Export to back your work up or move it to another device.</div>`);
 
   $$("[data-open]").forEach(b => b.onclick = e => { e.stopPropagation(); openSavedDesign(b.dataset.open); });
   $("#gvHistClear").onclick = () => {
@@ -4897,8 +4663,6 @@ let dockTab = null;
 function buildShell() {
   const el = document.createElement("div");
   el.innerHTML = `
-    <button class="gv-authbtn glass" id="gvAuthBtn" title="Account"></button>
-
     <button id="gvDockOpen" class="glass" title="Open the panel" aria-label="Open the panel">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
         <rect x="3" y="4" width="18" height="16" rx="2"/><path d="M9 4v16"/>
@@ -4933,7 +4697,6 @@ function buildShell() {
     </div>`;
   while (el.firstElementChild) document.body.appendChild(el.firstElementChild);
 
-  $("#gvAuthBtn").onclick = openAuth;
   $("#gvDockClose").onclick = closeDock;
   $("#gvSheetClose").onclick = closeSheet;
   $("#gvSheetWrap").addEventListener("click", e => { if (e.target.id === "gvSheetWrap") closeSheet(); });
@@ -4941,19 +4704,6 @@ function buildShell() {
   document.addEventListener("keydown", e => {
     if (e.key === "Escape") { if ($("#gvSheetWrap").classList.contains("on")) closeSheet(); }
   });
-  renderAuthBtn();
-}
-
-function renderAuthBtn() {
-  const b = $("#gvAuthBtn"); if (!b) return;
-  if (GV.auth.isIn()) {
-    const u = GV.auth.user;
-    b.innerHTML = `<span class="gv-avatar gv-avatar-sm">${(u.name || u.email)[0].toUpperCase()}</span>`;
-    b.title = u.email;
-  } else {
-    b.innerHTML = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round"><circle cx="12" cy="8.5" r="3.6"/><path d="M5.5 20a6.5 6.5 0 0113 0"/></svg><em>Sign in</em>`;
-    b.title = "Sign in";
-  }
 }
 
 let _dockLock = false;
@@ -5122,8 +4872,7 @@ GV.ui = {
   gallery: () => openDock("gallery"),
   library: () => openDock("gallery"),
   history: () => openDock("history"),
-  builder: openBuilder,
-  auth:    openAuth
+  builder: openBuilder
 };
 
 function hookHost() {
@@ -5194,15 +4943,6 @@ async function boot() {
     reopen.classList.add("show");
   }
 
-  // Magic-link return trip.
-  const p = new URLSearchParams(location.search);
-  if (p.get("gv_token") && GV.CFG.AUTH_URL) {
-    const u = await GV.auth.redeem(p.get("gv_token"));
-    renderAuthBtn();
-    toast(u ? "Signed in as " + u.email : "That sign-in link has expired \u2014 request a new one");
-    history.replaceState({}, "", location.pathname + location.hash);
-  }
-
   // If the host already has a point (deep link), wrap it in an AOI.
   if (window.lastPoint) {
     GV.aoi = makeAOI(window.lastPoint[0], window.lastPoint[1]);
@@ -5210,8 +4950,7 @@ async function boot() {
   }
 
   console.log("%cGreenVision Studio", "color:#12b981;font-weight:800",
-    "\u00B7 AOI " + GV.CFG.AOI_KM2 + " km\u00B2 \u00B7 auth " + GV.auth.mode +
-    " \u00B7 gallery " + (GV.CFG.COMMUNITY_URL ? "server" : "device") +
+    "\u00B7 AOI " + GV.CFG.AOI_KM2 + " km\u00B2 \u00B7 Library on this device" +
     " \u00B7 traffic " + (GV.CFG.TOMTOM_KEY ? "live + modelled" : "modelled"));
 }
 
@@ -5979,10 +5718,6 @@ GV.act = {
    test_studio.js uses exactly this surface. */
 GV.engines = { computeCost, reviewDesign, project, speciesList, ringAreaM2, ELEMENTS, TREE_ECON };
 
-if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", boot);
-else boot();
-
-})();
 
 /* =====================================================================
    14. 3D BUILDER — select land, place 3D elements, cost + review
@@ -6339,8 +6074,7 @@ function builderDesign() {
     place: window.lastPlace || "",
     aoi: { lat: base.lat, lon: base.lon, km2: 100 },
     plot: { ring: plotRing, area_m2: S*S },
-    items, mode:"3d", land: B.land, created: Date.now(),
-    author: GV.auth.user ? (GV.auth.user.name || GV.auth.user.email) : ""
+    items, mode:"3d", land: B.land, created: Date.now(), author: ""
   };
 }
 
@@ -6409,6 +6143,10 @@ function builderSave() {
   toast("Saved \u2014 find it in History and Library");
 }
 
+if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", boot);
+else boot();
+
+})();
 
 /* =====================================================================
    13. PLANTING PRIORITY — the engine's ranking, on the map

@@ -268,6 +268,14 @@ matching rather than inventing a value.
   the default and needs nothing. Install the OpenVINO extras and it is a local
   INT4 model instead. Either way nothing leaves the machine.
 
+  On the **static build** (no Python server) the assistant is `gv-engine.js`,
+  a deterministic planner with a short conversational memory: it carries
+  context across turns, so "and the cost?", "why those?", "the second one",
+  "make it bigger" and "yes" resolve against what was just said or shown;
+  vague asks get a question back rather than a guessed answer; and small talk
+  gets a human reply instead of the help card. It is narrower than the Python
+  assistant and says so where it cannot answer.
+
 - **100 km² area of interest.** Clicking the map draws a circle of
   r = √(100/π) km ≈ 5.64 km (`GV.CFG.AOI_KM2`) and scopes every reading to it,
   sampling air quality at 9 points spread across the area. **Any click more
@@ -368,8 +376,10 @@ matching rather than inventing a value.
   so right-to-left layout never switched on. `/api/health` and the baked
   `meta.json` count what is in the registry, so they now report seven.
 
-- **Storage.** Designs are saved to browser LocalStorage. Nothing is uploaded
-  unless you set `COMMUNITY_URL` and publish deliberately.
+- **Storage.** Designs are saved to browser LocalStorage — the Library and
+  History tabs read from there. There is no account and no sign-in; nothing is
+  uploaded. Use the Library's **Export** to back designs up or move them to
+  another device.
 
 ### Configuration
 
@@ -378,15 +388,12 @@ There are **two** config objects in `index.html`:
 | Object | Line | Holds |
 |---|---|---|
 | `CFG` | ~355 | map start, tile URLs, Overpass mirrors |
-| `GV.CFG` | ~1968 | `AOI_KM2`, `AOI_REFRESH_M`, `RATES`, `TOMTOM_KEY`, `AUTH_URL`, `COMMUNITY_URL`, `GOOGLE_CLIENT_ID` |
+| `GV.CFG` | ~1968 | `AOI_KM2`, `AOI_REFRESH_M`, `RATES`, `TOMTOM_KEY` |
 
 ```javascript
 GV.CFG = {
   AOI_KM2: 100,
   AOI_REFRESH_M: 150,     // how far a click must move before everything re-reads
-  AUTH_URL: "",           // blank => local-only sign-in
-  COMMUNITY_URL: "",      // blank => gallery shows only your own designs
-  GOOGLE_CLIENT_ID: "",   // for "Continue with Google"
   TOMTOM_KEY: "",         // blank => traffic is MODELLED from OSM topology, not measured
   RATES: { labour_day: 650, mali_month: 14000, water_kl: 45,
            contingency: 0.12, design_fee: 0.08, gst: 0.18 }
